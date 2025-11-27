@@ -16,29 +16,44 @@ const int STAR_COUNT = 150;
 
 StarField sideStarField = { 0 };
 
-// --- FUNÇÃO MAIN ---
+// Shader global
+Shader crtShader;
+
+// Uniform locations
+int locResolution;
+int locTime;
+
 int main(void) {
-    // ConfigFlags deve ser chamado antes de InitWindow
+    // FULLSCREEN antes da janela
     SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    int monitorWidth = GetMonitorWidth(GetCurrentMonitor());
+
+    int monitorWidth  = GetMonitorWidth(GetCurrentMonitor());
     int monitorHeight = GetMonitorHeight(GetCurrentMonitor());
 
     InitWindow(monitorWidth, monitorHeight, "Byte in Space 2");
-
-    // É importante definir o FPS alvo logo após a inicialização da janela
     SetTargetFPS(60);
 
     RenderTexture2D target = LoadRenderTexture(GAME_WIDTH, GAME_HEIGHT);
     InitAudioDevice();
 
-    // --- 1. INICIALIZAÇÃO DOS COMPONENTES ---
+    // --- SHADER CRT ---
+    crtShader = LoadShader(0, "assets/shaders/crt16.fs");
+
+    locResolution = GetShaderLocation(crtShader, "resolution");
+    locTime       = GetShaderLocation(crtShader, "time");
+
+    float initialRes[2] = { (float)monitorWidth, (float)monitorHeight };
+    SetShaderValue(crtShader, locResolution, initialRes, SHADER_UNIFORM_VEC2);
+    // ----------------------------------------------------
+
+    // --- INICIALIZAÇÃO DO JOGO ---
     StarField starField = { 0 };
     InitStarField(&starField, STAR_COUNT, GAME_WIDTH, GAME_HEIGHT);
     InitStarField(&sideStarField, STAR_COUNT / 2, monitorWidth, monitorHeight);
 
     Player player;
     InitPlayer(&player);
-    player.gold = 50; // GOLD INICIAL PARA TESTAR COMPRAS
+    player.gold = 0;
 
     Hud hud;
     InitHud(&hud);
@@ -50,61 +65,70 @@ int main(void) {
     InitAudioManager(&audioManager);
 
     ShopScene shop;
-    InitShop(&shop, GAME_WIDTH, GAME_HEIGHT);
+    InitShop(&shop, &player, GAME_WIDTH, GAME_HEIGHT);
 
     CutsceneScene cutscene;
     InitCutscene(&cutscene);
 
-    GameState currentState = STATE_CUTSCENE; // Inicia na cutscene
+    GameState currentState = STATE_CUTSCENE;
 
-    // TOCA MÚSICA DA CUTSCENE AO INICIAR
     PlayMusicTrack(&audioManager, MUSIC_CUTSCENE);
 
-    // Reposiciona Player para a loja
-    float player_width_scaled = player.texture.width * player.scale;
-    float player_height_scaled = (float)player.texture.height * player.scale;
-    player.position.x = (float)GAME_WIDTH/2 - player_width_scaled/2;
-    player.position.y = (float)GAME_HEIGHT - player_height_scaled - 100.0f;
+    float player_width_scaled  = player.texture.width * player.scale;
+    float player_height_scaled = player.texture.height * player.scale;
+
+    player.position.x = GAME_WIDTH/2 - player_width_scaled/2;
+    player.position.y = GAME_HEIGHT - player_height_scaled - 100.0f;
 
 
     while (!WindowShouldClose()) {
-        if (IsKeyPressed(KEY_ESCAPE)) { break; }
+
+        if (IsKeyPressed(KEY_ESCAPE)) break;
 
         float dt = GetFrameTime();
 
-        // --- CÁLCULOS DE ESCALA DA TELA ---
+        // ESCALA DO JOGO NA TELA REAL
         int screenW = GetScreenWidth();
         int screenH = GetScreenHeight();
         float scaleX = (float)screenW / GAME_WIDTH;
         float scaleY = (float)screenH / GAME_HEIGHT;
         float scale = (scaleX < scaleY) ? scaleX : scaleY;
-        int offsetX = (screenW - (int)((float)GAME_WIDTH * scale)) / 2;
-        int offsetY = (screenH - (int)((float)GAME_HEIGHT * scale)) / 2;
 
-        // --- UPDATE ---
+        int offsetX = (screenW - (int)(GAME_WIDTH * scale)) / 2;
+        int offsetY = (screenH - (int)(GAME_HEIGHT * scale)) / 2;
+
+        // --- UPDATE DO SHADER ---
+        float t = GetTime();
+        SetShaderValue(crtShader, locTime, &t, SHADER_UNIFORM_FLOAT);
+
+        float res[2] = { (float)screenW, (float)screenH };
+        SetShaderValue(crtShader, locResolution, res, SHADER_UNIFORM_VEC2);
+        // ---------------------------
+
+        // --- UPDATE GLOBAL ---
         UpdateAudioManager(&audioManager);
         UpdateStarField(&sideStarField, dt);
 
-        // MÁQUINA DE ESTADOS: LÓGICA
+        // MÁQUINA DE ESTADOS
         switch (currentState) {
-            case STATE_CUTSCENE: {
+            case STATE_CUTSCENE:
                 UpdateCutscene(&cutscene, &currentState, dt);
+
                 if (currentState == STATE_SHOP) {
                     StopMusicStream(audioManager.musicCutscene);
                     PlayMusicTrack(&audioManager, MUSIC_SHOP);
                 }
                 break;
-            }
 
-            case STATE_SHOP: {
+            case STATE_SHOP:
                 UpdateShop(&shop, &player, &starField, &currentState, dt);
                 UpdatePlayerBullets(&bulletManager, dt);
 
                 if (currentState == STATE_GAMEPLAY) {
+                    StopMusicStream(audioManager.musicShop);
                     PlayMusicTrack(&audioManager, MUSIC_GAMEPLAY);
                 }
                 break;
-            }
 
             case STATE_GAMEPLAY:
                 UpdateStarField(&starField, dt);
@@ -114,11 +138,10 @@ int main(void) {
                 break;
         }
 
-        // --- 3. DESENHO NA RENDER TEXTURE (800x600) ---
+        // --- RENDER PARA O TARGET (800x600) ---
         BeginTextureMode(target);
             ClearBackground(BLACK);
 
-            // MÁQUINA DE ESTADOS: DESENHO
             switch (currentState) {
                 case STATE_CUTSCENE:
                     DrawCutscene(&cutscene, GAME_WIDTH, GAME_HEIGHT);
@@ -127,37 +150,40 @@ int main(void) {
                 case STATE_SHOP:
                     DrawShop(&shop, &player, &starField);
                     DrawPlayerBullets(&bulletManager);
-                    // IMPORTANTE: Não chame DrawHud ou DrawDialog aqui. O diálogo é feito dentro de DrawShop.
                     break;
 
                 case STATE_GAMEPLAY:
                     DrawStarField(&starField);
                     DrawPlayer(&player);
                     DrawPlayerBullets(&bulletManager);
-                    // DrawHud(&hud, &player); // (Comentada pois não está implementada em hud.c)
                     break;
             }
         EndTextureMode();
 
-        // --- 4. DESENHO NA TELA REAL (USANDO ESCALA) ---
+        // --- RENDER FINAL ---
         BeginDrawing();
             ClearBackground(BLACK);
 
-            // Desenha o StarField Lateral para preencher as bordas
             if (offsetX > 0 || offsetY > 0) {
                 DrawStarField(&sideStarField);
             }
 
-            // Desenha a área de jogo 800x600 escalonada
-            DrawTexturePro(target.texture,
-                (Rectangle){ 0.0f, 0.0f, (float)target.texture.width, (float)-target.texture.height },
-                (Rectangle){ (float)offsetX, (float)offsetY, (float)GAME_WIDTH * scale, (float)GAME_HEIGHT * scale },
-                (Vector2){ 0, 0 }, 0.0f, WHITE);
+            BeginShaderMode(crtShader);
 
-            // Desenha a HUD nas barras laterais
+            DrawTexturePro(
+                target.texture,
+                (Rectangle){0, 0, (float)target.texture.width, -(float)target.texture.height},
+                (Rectangle){(float)offsetX, (float)offsetY, GAME_WIDTH * scale, GAME_HEIGHT * scale},
+                (Vector2){0, 0},
+                0.0f,
+                WHITE
+            );
+
+            EndShaderMode();
+
             if (currentState == STATE_GAMEPLAY && offsetX > 0) {
-                DrawHudSide(&hud, true, offsetY, player.energyCharge);
-                DrawHudSide(&hud, false, offsetY, 0.0f);
+                DrawHudSide(&hud, true, offsetY, player.energyCharge, player.hasDoubleShot, player.hasShield, player.extraLives);
+                DrawHudSide(&hud, false, offsetY, 0.0f, false, false, 0);
             }
 
             DrawFPS(10, 50);
@@ -165,12 +191,14 @@ int main(void) {
         EndDrawing();
     }
 
-    // --- DESCARREGAMENTO (UNLOAD) ---
+    // --- FINALIZAÇÃO ---
     UnloadShop(&shop);
     UnloadPlayer(&player);
     UnloadRenderTexture(target);
     UnloadBulletManager(&bulletManager);
     UnloadAudioManager(&audioManager);
+
+    UnloadShader(crtShader);
 
     CloseAudioDevice();
     CloseWindow();

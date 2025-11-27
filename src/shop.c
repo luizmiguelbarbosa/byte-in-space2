@@ -1,58 +1,99 @@
 #include "shop.h"
+#include "player.h"
+#include "raylib.h"
 #include <stdio.h>
 #include <math.h>
 
-// ATUALIZADO: Novo caminho e nome de arquivo
-#define VENDOR_PATH "assets/images/sprites/vendedor_sheet2.png"
-
-// ATUALIZADO: Novas dimensões do frame
-#define VENDOR_BASE_FRAME_W 476.0f
-#define VENDOR_BASE_FRAME_H 450.0f
-#define VENDOR_DRAW_SCALE 0.16f   // AJUSTADO: Escala para 0.16f (Sprite final terá ~76x72 pixels, ótimo para a cena)
+// Definições de caminhos relativos
+#define VENDOR_BASE_FRAME_W 64.0f
+#define VENDOR_BASE_FRAME_H 64.0f
+#define VENDOR_DRAW_SCALE 6.0f
 #define HORIZON_OFFSET_Y -50.0f
-// Velocidade da animação (ajuste se for muito rápido/lento)
-#define VENDOR_ANIM_SPEED 0.3f
+#define PARTICLE_LIFETIME 0.5f
 
-void InitShop(ShopScene *shop, int gameWidth, int gameHeight) {
-    // 1. Carregar Sprite do Vendedor
-    shop->vendor.texture = LoadTexture(VENDOR_PATH);
-    if (shop->vendor.texture.id == 0) {
-        printf("[ERRO] Nao foi possivel carregar o sprite do vendedor em: %s\n", VENDOR_PATH);
-    }
-    SetTextureFilter(shop->vendor.texture, TEXTURE_FILTER_POINT);
+#define ENERGY_POWERUP_PATH "assets/images/sprites/energy_icon.png"
+#define DOUBLE_SHOT_PATH "assets/images/sprites/tiroduplo.png"
+#define SHIELD_PATH "assets/images/sprites/shield.png"
+#define EXTRA_LIFE_PATH "assets/images/sprites/vidaextra.png"
 
-    // Calcula o número de frames
-    shop->vendor.frameCountX = shop->vendor.texture.width / (int)VENDOR_BASE_FRAME_W;
-    shop->vendor.frameCountY = shop->vendor.texture.height / (int)VENDOR_BASE_FRAME_H;
+#define TEXT_BOX_HEIGHT 100
+#define DIALOG_FONT_SIZE 18
+#define DIALOG_TEXT_Y_OFFSET 40
 
-    if (shop->vendor.frameCountX == 0) shop->vendor.frameCountX = 1;
-    if (shop->vendor.frameCountY == 0) shop->vendor.frameCountY = 1;
+// Define a distância aparente para o portal
+#define PORTAL_Z_DISTANCE 0.5f
+// Usaremos esse valor apenas para posicionar o VISUAL do portal.
+#define PORTAL_BASE_Y_OFFSET 150.0f
 
+// Cores para os brilhos do portal
+#define PORTAL_BRIGHT_CYAN (Color){ 100, 255, 255, 255 }
+#define PORTAL_DARK_BLUE (Color){ 0, 0, 100, 255 }
+
+// Tamanho dos ícones dos power-ups
+const float ITEM_SIZE_SCALED = 60.0f;
+
+
+void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
+    // 1. Inicialização
     shop->vendor.frameRec = (Rectangle){ 0.0f, 0.0f, VENDOR_BASE_FRAME_W, VENDOR_BASE_FRAME_H };
-
-    // Posiciona o vendedor no horizonte
-    float vendorDrawHeight = VENDOR_BASE_FRAME_H * VENDOR_DRAW_SCALE;
-    float horizonY = (float)gameHeight / 2 + HORIZON_OFFSET_Y;
-    shop->vendor.position = (Vector2){
-        (float)gameWidth/2 - (VENDOR_BASE_FRAME_W * VENDOR_DRAW_SCALE)/2,
-        horizonY - vendorDrawHeight + 10
-    };
-
-    shop->vendor.currentFrame = 0;
-    shop->vendor.frameTimer = 0.0f;
+    shop->vendor.scale = VENDOR_DRAW_SCALE;
     shop->vendor.isHappy = false;
     shop->vendor.happyTimer = 0.0f;
-    shop->vendor.scale = VENDOR_DRAW_SCALE;
+    shop->portalParallaxOffset = 0.0f;
 
-    // 2. Configurar Itens
+    float vendorDrawWidth = shop->vendor.frameRec.width * shop->vendor.scale;
+    float vendorDrawHeight = shop->vendor.frameRec.height * shop->vendor.scale;
+    float horizonY = (float)gameHeight / 2 + HORIZON_OFFSET_Y;
+
+    // MUDANÇA CRUCIAL: A área de colisão (exitArea) é agora uma pequena caixa,
+    // localizada em uma posição específica, bem acima do jogador, mas abaixo do visual.
+    float collisionY = horizonY + 50.0f; // Posição Y da colisão (bem abaixo do horizonte)
+    float collisionW = 40.0f;
+    float collisionH = 20.0f;
+
+    shop->exitArea = (Rectangle){
+        (float)gameWidth/2 - collisionW / 2,
+        collisionY,
+        collisionW,
+        collisionH
+    };
+
+    // Posiciona o jogador no CHÃO
+    float playerH = player->texture.height * player->scale;
+    float playerW = player->texture.width * player->scale;
+    player->position = (Vector2){
+        (float)gameWidth / 2 - playerW / 2,         // Centro X
+        600.0f - TEXT_BOX_HEIGHT - playerH - 10.0f  // Na parte inferior da tela, bem longe do portal
+    };
+
+    // 2. Carregamento dos Itens
+    shop->itemTextures[0] = LoadTexture(ENERGY_POWERUP_PATH);
+    shop->itemTextures[1] = LoadTexture(DOUBLE_SHOT_PATH);
+    shop->itemTextures[2] = LoadTexture(SHIELD_PATH);
+    shop->itemTextures[3] = LoadTexture(EXTRA_LIFE_PATH);
+
+    for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
+        if (shop->itemTextures[i].id != 0) SetTextureFilter(shop->itemTextures[i], TEXTURE_FILTER_POINT);
+    }
+
+
     float midX = (float)gameWidth / 2;
     float floorY = (float)gameHeight / 2 + 60;
 
-    shop->items[0] = (ShopItem){ { midX - 160, floorY, 40, 40 }, "TIRO RAPIDO", 0, RED, true };
-    shop->items[1] = (ShopItem){ { midX - 20, floorY, 40, 40 }, "ESCUDO", 0, BLUE, true };
-    shop->items[2] = (ShopItem){ { midX + 120, floorY, 40, 40 }, "VIDA EXTRA", 0, GREEN, true };
+    // Posicionamento dos ITENS CENTRALIZADOS
+    float itemSpacing = 20.0f;
+    float totalItemsWidth = (ITEM_SIZE_SCALED * MAX_SHOP_ITEMS) + (itemSpacing * (MAX_SHOP_ITEMS - 1));
+    float startX = midX - totalItemsWidth / 2;
 
-    sprintf(shop->dialogText, "OLA VIAJANTE! ESTE PRIMEIRO UPGRADE E POR MINHA CONTA.");
+    shop->items[0] = (ShopItem){ { startX, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "Carga de Energia", 0, WHITE, true, ITEM_ENERGY_CHARGE };
+    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "TIRO DUPLO", 100, RED, true, ITEM_DOUBLE_SHOT };
+    shop->items[2] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 2, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "ESCUDO", 200, BLUE, true, ITEM_SHIELD };
+    shop->items[3] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 3, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "VIDA EXTRA", 300, GREEN, true, ITEM_EXTRA_LIFE };
+
+    shop->particleTimer = 0.0f;
+    shop->showParticles = false;
+
+    sprintf(shop->dialogText, "SEJA BEM-VINDO, VIAJANTE! O UPGRADE DE ENERGIA E POR MINHA CONTA.");
     shop->itemBought = false;
     shop->itemFocused = false;
 }
@@ -82,7 +123,16 @@ void DrawShopEnvironment(int width, int height) {
 void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *state, float deltaTime) {
     UpdateStarField(stars, deltaTime);
 
-    // --- Movimentação Livre do Player NA LOJA ---
+    #ifndef __RAYMATH_H__
+        #define CLAMP(v, min, max) ((v) < (min) ? (min) : ((v) > (max) ? (max) : (v)))
+        #define Clamp(v, min, max) CLAMP((v), (min), (max))
+    #endif
+
+    float pW = player->texture.width * player->scale;
+    float pH = player->texture.height * player->scale;
+    Rectangle playerRect = { player->position.x, player->position.y, pW, pH };
+
+    // Lógica de Movimento e Saída
     if (!shop->itemBought) {
         float speed = player->speed * deltaTime;
         if (IsKeyDown(KEY_LEFT)) player->position.x -= speed;
@@ -90,98 +140,91 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
         if (IsKeyDown(KEY_UP)) player->position.y -= speed;
         if (IsKeyDown(KEY_DOWN)) player->position.y += speed;
 
-        // Limite da área caminhável na loja
-        if (player->position.x < 0) player->position.x = 0;
-        if (player->position.x > 800 - player->texture.width * player->scale) player->position.x = 800 - player->texture.width * player->scale;
-        if (player->position.y < (float)600/2 - 50) player->position.y = (float)600/2 - 50;
-        if (player->position.y > 600 - player->texture.height * player->scale - 10) player->position.y = 600 - player->texture.height * player->scale - 10;
+        player->position.x = Clamp(player->position.x, 0.0f, 800.0f - pW);
+
+        // MUDANÇA CRUCIAL: Limite superior (menor Y) de movimento do jogador.
+        // O jogador só pode subir até o ponto onde começa a área de colisão do portal.
+        player->position.y = Clamp(player->position.y, shop->exitArea.y - pH, 600.0f - pH - TEXT_BOX_HEIGHT);
+
+        // Calcular offset do portal para parallax
+        float playerRelativeX = (player->position.x - (800.0f / 2.0f)) / (800.0f / 2.0f);
+        shop->portalParallaxOffset = playerRelativeX * 50.0f * PORTAL_Z_DISTANCE;
+
+        // ÚNICA LÓGICA DE SAÍDA: Verifica se o jogador colidiu com a área de colisão
+        if (CheckCollisionRecs(playerRect, shop->exitArea)) {
+            *state = STATE_GAMEPLAY;
+            player->position = (Vector2){ 400 - pW/2, 600 - 100 };
+            return;
+        }
     }
 
-    // --- Animação do Vendedor ---
-    shop->vendor.frameTimer += deltaTime;
-    int framesPerRow = shop->vendor.frameCountX;
-    int maxFramesIdle = framesPerRow * 5; // Assumindo as primeiras 5 linhas são Idle/Looping
-    int maxFramesHappy = framesPerRow * 2; // Assumindo duas linhas para Happy
-
-    if (!shop->vendor.isHappy) {
-        // IDLE (loop pelas primeiras N linhas)
-        if (shop->vendor.frameTimer >= VENDOR_ANIM_SPEED) {
-            shop->vendor.frameTimer = 0.0f;
-            shop->vendor.currentFrame = (shop->vendor.currentFrame + 1) % maxFramesIdle;
-
-            // Calcula a linha e coluna
-            int row = shop->vendor.currentFrame / framesPerRow;
-            int col = shop->vendor.currentFrame % framesPerRow;
-
-            shop->vendor.frameRec.x = (float)col * shop->vendor.frameRec.width;
-            shop->vendor.frameRec.y = (float)row * shop->vendor.frameRec.height;
-        }
-    } else {
-        // HAPPY (loop pelas últimas linhas)
-        // Isso assume que os frames Happy começam na linha 6 (índice 5)
-        int startRow = 5;
-
-        if (shop->vendor.frameTimer >= VENDOR_ANIM_SPEED / 2.0f) {
-            shop->vendor.frameTimer = 0.0f;
-            shop->vendor.currentFrame = (shop->vendor.currentFrame + 1) % maxFramesHappy;
-
-            // Calcula a linha e coluna (a partir da linha de início)
-            int row = startRow + (shop->vendor.currentFrame / framesPerRow);
-            int col = shop->vendor.currentFrame % framesPerRow;
-
-            // Limita a linha para não sair do spritesheet
-            if (row < shop->vendor.frameCountY) {
-                shop->vendor.frameRec.x = (float)col * shop->vendor.frameRec.width;
-                shop->vendor.frameRec.y = (float)row * shop->vendor.frameRec.height;
-            } else {
-                 // Se sair do limite, volta para o último frame válido da animação Happy
-                 shop->vendor.frameRec.x = (float)(framesPerRow - 1) * shop->vendor.frameRec.width;
-                 shop->vendor.frameRec.y = (float)(shop->vendor.frameCountY - 1) * shop->vendor.frameRec.height;
-            }
-        }
-
+    if (shop->vendor.isHappy) {
         shop->vendor.happyTimer += deltaTime;
         if (shop->vendor.happyTimer > 3.0f) {
-            *state = STATE_GAMEPLAY;
-            float pW = player->texture.width * player->scale;
-            player->position = (Vector2){ 400 - pW/2, 600 - 100 };
             shop->vendor.isHappy = false;
             shop->vendor.happyTimer = 0.0f;
         }
     }
 
-    // --- Lógica de Compra e Dinheiro ---
-    if (!shop->itemBought) {
-        float pW = player->texture.width * player->scale;
-        float pH = player->texture.height * player->scale;
-        Rectangle playerRect = { player->position.x, player->position.y, pW, pH };
+    // Gerencia o efeito visual (partículas)
+    if (shop->itemBought) {
+        shop->showParticles = true;
+        shop->particleTimer += deltaTime;
 
+        if (shop->particleTimer > PARTICLE_LIFETIME) {
+            shop->itemBought = false;
+            shop->particleTimer = 0.0f;
+            shop->showParticles = false;
+            shop->vendor.isHappy = true;
+        }
+    }
+
+    // Lógica de Compra
+    if (!shop->itemBought) {
         bool isPlayerNearItem = false;
 
-        for (int i = 0; i < 3; i++) {
-            if (shop->items[i].active) {
+        for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
+            bool shouldCheck = shop->items[i].active || (shop->items[i].type == ITEM_ENERGY_CHARGE && !player->canCharge);
+
+            if (shouldCheck) {
                 if (CheckCollisionRecs(playerRect, shop->items[i].rect)) {
                     isPlayerNearItem = true;
 
-                    char priceText[32];
-                    if (shop->items[i].price == 0) {
-                        sprintf(priceText, "GRATUITO");
-                    } else {
-                        sprintf(priceText, "$%d", shop->items[i].price);
+                    if (shop->items[i].type == ITEM_ENERGY_CHARGE) {
+                        if (!player->canCharge) {
+                            sprintf(shop->dialogText, "UPGRADE DE ENERGIA: HABILITA O TIRO CARREGADO! PRESSIONE E.");
+
+                            if (IsKeyPressed(KEY_E)) {
+                                player->canCharge = true;
+                                shop->itemBought = true;
+                                shop->items[i].active = false;
+                                sprintf(shop->dialogText, "SISTEMAS ONLINE! CARGA DE ENERGIA HABILITADA.");
+                            }
+                        }
                     }
+                    else if (shop->items[i].active) {
+                        char priceText[32];
+                        sprintf(priceText, "$%d", shop->items[i].price);
 
-                    sprintf(shop->dialogText, "COMPRAR %s POR %s? PRESSIONE E.", shop->items[i].name, priceText);
+                        sprintf(shop->dialogText, "COMPRAR %s POR %s? PRESSIONE E.", shop->items[i].name, priceText);
 
-                    if (IsKeyPressed(KEY_E)) {
-                        if (player->gold >= shop->items[i].price) {
-                            player->gold -= shop->items[i].price;
-                            shop->itemBought = true;
-                            shop->vendor.isHappy = true;
-                            shop->vendor.currentFrame = 0;
-                            shop->items[i].active = false;
-                            sprintf(shop->dialogText, "NEGOCIO FECHADO! SISTEMAS ONLINE... INICIANDO...");
-                        } else {
-                            sprintf(shop->dialogText, "VOCE NAO TEM CREDITOS SUFICIENTES! (%s)", shop->items[i].name);
+                        if (IsKeyPressed(KEY_E)) {
+                            if (player->gold >= shop->items[i].price) {
+
+                                switch (shop->items[i].type) {
+                                    case ITEM_DOUBLE_SHOT: player->hasDoubleShot = true; break;
+                                    case ITEM_SHIELD: player->hasShield = true; break;
+                                    case ITEM_EXTRA_LIFE: player->extraLives++; break;
+                                    default: break;
+                                }
+
+                                player->gold -= shop->items[i].price;
+                                shop->itemBought = true;
+                                shop->items[i].active = false;
+                                sprintf(shop->dialogText, "NEGOCIO FECHADO! %s ATIVADO! Use o PORTAL para sair.", shop->items[i].name);
+                            } else {
+                                sprintf(shop->dialogText, "CREDITOS INSUFICIENTES! Voce precisa de mais $%d para comprar %s.", shop->items[i].price, shop->items[i].name);
+                            }
                         }
                     }
                 }
@@ -189,71 +232,150 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
         }
 
         if (!isPlayerNearItem) {
-            if (shop->items[0].active) {
-                 sprintf(shop->dialogText, "OLA VIAJANTE! ESTE PRIMEIRO UPGRADE E POR MINHA CONTA.");
+            if (!player->canCharge) {
+                 sprintf(shop->dialogText, "SEJA BEM-VINDO, VIAJANTE! O UPGRADE DE ENERGIA E POR MINHA CONTA.");
             } else {
-                sprintf(shop->dialogText, "EXPLORE A LOJA! USE AS SETAS PARA SE MOVER.");
+                sprintf(shop->dialogText, "EXPLORE OS PRODUTOS! Mova-se ate o portal no centro para SAIR. CREDITOS: $%d", player->gold);
             }
         }
     }
 }
 
 void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
-    // 1. Estrelas e Cenário
     DrawStarField(stars);
     DrawShopEnvironment(800, 600);
 
-    // 2. Itens
-    if (!shop->itemBought) {
-        for (int i = 0; i < 3; i++) {
-            if (shop->items[i].active) {
-                float floatY = sin(GetTime() * 3 + i) * 3;
-                Rectangle drawRect = shop->items[i].rect;
-                drawRect.y += floatY;
+    // -----------------------------------------------------------------
+    // DESENHO DO PORTAL (Visual - usa o tamanho total)
+    // -----------------------------------------------------------------
 
-                DrawRectangleRec(drawRect, shop->items[i].color);
-                DrawRectangleLinesEx(drawRect, 2, WHITE);
+    float vendorDrawWidth = VENDOR_BASE_FRAME_W * VENDOR_DRAW_SCALE;
+    float vendorDrawHeight = VENDOR_BASE_FRAME_H * VENDOR_DRAW_SCALE;
 
-                DrawText(shop->items[i].name, (int)drawRect.x - 20, (int)drawRect.y - 25, 10, GREEN);
+    float portalBaseY = shop->exitArea.y + shop->exitArea.height / 2; // Centraliza a base do visual na colisão
+    float time = GetTime();
+    float pulse = sin(time * 4.0f) * 0.1f + 0.9f;
 
-                char priceText[16];
-                if (shop->items[i].price == 0) sprintf(priceText, "FREE");
-                else sprintf(priceText, "$%d", shop->items[i].price);
+    // Aplicar o offset do parallax ao *visual* do portal
+    Rectangle portalVisualRect = {
+        shop->exitArea.x + shop->portalParallaxOffset - (vendorDrawWidth - shop->exitArea.width) / 2, // Ajusta a largura
+        portalBaseY - vendorDrawHeight, // Puxa para cima para desenhar a altura total
+        vendorDrawWidth,
+        vendorDrawHeight
+    };
+    float portalDrawCenterX = portalVisualRect.x + portalVisualRect.width / 2;
 
-                DrawText(priceText, (int)drawRect.x + 5, (int)drawRect.y + 45, 10, YELLOW);
+
+    Color topColor = Fade(SKYBLUE, 0.7f * pulse);
+    Color bottomColor = Fade(BLUE, 0.9f * pulse);
+
+    // 1. Efeito de Chão (Fonte de Energia)
+    DrawCircleGradient(
+        (int)portalDrawCenterX,
+        (int)(portalVisualRect.y + portalVisualRect.height), // Base do visual
+        portalVisualRect.width / 2.0f * pulse,
+        PORTAL_BRIGHT_CYAN,
+        Fade(PORTAL_DARK_BLUE, 0.0f)
+    );
+
+    // 2. Desenho do Corpo Principal com Gradiente Vertical
+    DrawRectangleGradientV(
+        (int)portalVisualRect.x,
+        (int)portalVisualRect.y,
+        (int)portalVisualRect.width,
+        (int)portalVisualRect.height,
+        topColor,
+        bottomColor
+    );
+
+    // 3. Efeito de Contorno Pulsante
+    DrawRectangleLinesEx(portalVisualRect, 3.0f, Fade((Color){ 0, 255, 255, 255 }, 0.8f * pulse));
+
+    // 4. Brilhos adicionais ao redor do portal
+    for (int i = 0; i < 5; i++) {
+        float angle = time * (10 + i * 2) + i * 0.5f;
+        float radius = portalVisualRect.width / 2.0f + sin(time * (3 + i)) * 10.0f;
+        float xOffset = cos(angle) * radius;
+        float yOffset = sin(angle) * radius * 0.5f;
+
+        Color brightPulseColor = Fade(PORTAL_BRIGHT_CYAN, 0.5f + sin(time * (5 + i)) * 0.3f);
+        DrawCircleV((Vector2){ portalDrawCenterX + xOffset, portalVisualRect.y + portalVisualRect.height/2 + yOffset }, 5.0f * pulse, brightPulseColor);
+    }
+
+    // 5. Texto do Portal
+    DrawText("PORTAL DE SAIDA",
+        (int)portalDrawCenterX - MeasureText("PORTAL DE SAIDA", 20)/2,
+        (int)(portalVisualRect.y + portalVisualRect.height) - 30, // Perto da base
+        20,
+        Fade(WHITE, 0.9f)
+    );
+
+    // [Opcional] Desenhar a caixa de colisão (DESCOMENTE PARA VER A COLISÃO)
+    // DrawRectangleLinesEx(shop->exitArea, 1.0f, RED);
+    // -----------------------------------------------------------------
+    // FIM DO PORTAL
+    // -----------------------------------------------------------------
+
+
+    // Desenho dos Itens
+    for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
+        bool shouldDrawItem = shop->items[i].active || (shop->items[i].type == ITEM_ENERGY_CHARGE && !player->canCharge);
+
+        if (shouldDrawItem) {
+            Texture2D itemTexture = shop->itemTextures[i];
+            float floatY = sin(time * 3 + i) * 3;
+            Rectangle drawRect = shop->items[i].rect;
+            drawRect.y += floatY;
+
+            DrawRectangleRec(drawRect, Fade(shop->items[i].color, 0.4f));
+            DrawRectangleLinesEx(drawRect, 2, WHITE);
+
+            if (itemTexture.id != 0) {
+                float textureScale = drawRect.width / itemTexture.width;
+                Vector2 pos = { drawRect.x, drawRect.y };
+                DrawTextureEx(itemTexture, pos, 0.0f, textureScale, WHITE);
             }
+
+            int nameWidth = MeasureText(shop->items[i].name, 10);
+            DrawText(shop->items[i].name, (int)drawRect.x + (int)drawRect.width/2 - nameWidth/2, (int)drawRect.y - 25, 10, WHITE);
+
+            char priceText[16];
+            if (shop->items[i].price == 0) sprintf(priceText, "GRATIS");
+            else sprintf(priceText, "$%d", shop->items[i].price);
+
+            int priceWidth = MeasureText(priceText, 10);
+            DrawText(priceText, (int)drawRect.x + (int)drawRect.width/2 - priceWidth/2, (int)drawRect.y + (int)drawRect.height + 5, 10, YELLOW);
         }
     }
 
-    // 3. Vendedor
-    if (shop->vendor.texture.id != 0) {
-        Rectangle src = shop->vendor.frameRec;
+    // EFEITO VISUAL DE PARTÍCULAS
+    if (shop->showParticles) {
+        float pW = player->texture.width * player->scale;
+        float pH = player->texture.height * player->scale;
+        Vector2 playerCenter = { player->position.x + pW/2, player->position.y + pH/2 };
 
-        float destW = shop->vendor.frameRec.width * shop->vendor.scale;
-        float destH = shop->vendor.frameRec.height * shop->vendor.scale;
-        Rectangle dest = { shop->vendor.position.x, shop->vendor.position.y, destW, destH };
+        Color effectColor = LIME;
 
-        Vector2 origin = { 0, 0 };
-
-        DrawTexturePro(shop->vendor.texture, src, dest, origin, 0.0f, WHITE);
-    } else {
-        DrawRectangle(shop->vendor.position.x, shop->vendor.position.y, VENDOR_BASE_FRAME_W*shop->vendor.scale, VENDOR_BASE_FRAME_H*shop->vendor.scale, PURPLE);
-        DrawText("SPRITE ERROR", shop->vendor.position.x, shop->vendor.position.y, 10, WHITE);
+        float radius = (shop->particleTimer / PARTICLE_LIFETIME) * 60.0f;
+        Color particleColor = Fade(effectColor, 1.0f - (shop->particleTimer / PARTICLE_LIFETIME));
+        DrawCircleLines((int)playerCenter.x, (int)playerCenter.y, radius, particleColor);
     }
 
-    // 4. Player
-    DrawPlayer(player);
+    DrawPlayer(player); // Desenha o jogador
 
-    // 5. HUD de Dinheiro (Local da Loja)
+    // HUD (Créditos)
     DrawText(TextFormat("CREDITOS: $%d", player->gold), 10, 10, 20, GOLD);
 
-    // 6. Dialog Box (rodapé) - DIÁLOGO PRINCIPAL
-    int boxH = 100;
+    // Caixa de Diálogo
+    int boxH = TEXT_BOX_HEIGHT;
     DrawRectangle(0, 600 - boxH, 800, boxH, Fade(BLACK, 0.9f));
     DrawRectangleLines(0, 600 - boxH, 800, boxH, GREEN);
-    DrawText(shop->dialogText, 20, 600 - 70, 20, GREEN);
+
+    DrawTextEx(GetFontDefault(), shop->dialogText, (Vector2){ 20, 600 - DIALOG_TEXT_Y_OFFSET }, DIALOG_FONT_SIZE, 1, GREEN);
 }
 
 void UnloadShop(ShopScene *shop) {
-    if (shop->vendor.texture.id != 0) UnloadTexture(shop->vendor.texture);
+    for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
+        if (shop->itemTextures[i].id != 0) UnloadTexture(shop->itemTextures[i]);
+    }
 }

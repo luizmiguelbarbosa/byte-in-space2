@@ -19,10 +19,16 @@ typedef struct {
     float speed;
     float scale;
 
-    int gold; // NOVO: DINHEIRO DO JOGADOR
+    int gold; // DINHEIRO DO JOGADOR
 
     float energyCharge;
     bool isCharging;
+    bool canCharge; // NOVO: Habilita o tiro carregado (o power-up FREE)
+
+    // NOVOS: Power-ups comprados
+    bool hasDoubleShot;
+    bool hasShield;
+    int extraLives;
 
     // --- Propriedades da Aura ---
     float auraRadius;

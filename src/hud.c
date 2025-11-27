@@ -5,16 +5,22 @@
 
 // --- DEFINIÇÕES DE CAMINHOS ---
 #define LIFE_ICON_PATH "assets/images/sprites/life_icon_large.png"
-#define ENERGY_ICON_PATH "assets/images/sprites/energy_icon.png"
+#define ENERGY_ICON_PATH "C:/Users/luiz1/byte/assets/images/sprites/energy_icon.png" // SOLICITAÇÃO 2
+
+// --- PATHS DOS POWER-UPS ---
+#define DOUBLE_SHOT_PATH "assets/images/sprites/tiroduplo.png"
+#define SHIELD_PATH "assets/images/sprites/shield.png"
+// O ícone de vida extra é o mesmo do ícone de vida
+
 
 // --- ESCALAS PEQUENAS PARA DESENHO DA HUD (AJUSTE FINAL) ---
-#define LIFE_ICON_HUD_SCALE 0.12f
-#define ENERGY_ICON_HUD_SCALE 0.12f
+#define ICON_HUD_SCALE 0.12f
 
 void InitHud(Hud *hud) {
     hud->score = 0;
     hud->lives = 3;
 
+    // Carrega Texturas Base
     hud->lifeIconTexture = LoadTexture(LIFE_ICON_PATH);
     if (hud->lifeIconTexture.id != 0) SetTextureFilter(hud->lifeIconTexture, TEXTURE_FILTER_POINT);
     else printf("[ERRO] Icone de Vida nao encontrado: %s\n", LIFE_ICON_PATH);
@@ -22,76 +28,103 @@ void InitHud(Hud *hud) {
     hud->energyIconTexture = LoadTexture(ENERGY_ICON_PATH);
     if (hud->energyIconTexture.id != 0) SetTextureFilter(hud->energyIconTexture, TEXTURE_FILTER_POINT);
     else printf("[ERRO] Icone de Energia nao encontrado: %s\n", ENERGY_ICON_PATH);
+
+    // Carrega Texturas dos Power-ups
+    hud->doubleShotTexture = LoadTexture(DOUBLE_SHOT_PATH);
+    if (hud->doubleShotTexture.id != 0) SetTextureFilter(hud->doubleShotTexture, TEXTURE_FILTER_POINT);
+    else printf("[ERRO] Icone de Tiro Duplo nao encontrado: %s\n", DOUBLE_SHOT_PATH);
+
+    hud->shieldTexture = LoadTexture(SHIELD_PATH);
+    if (hud->shieldTexture.id != 0) SetTextureFilter(hud->shieldTexture, TEXTURE_FILTER_POINT);
+    else printf("[ERRO] Icone de Escudo nao encontrado: %s\n", SHIELD_PATH);
+
 }
 
 void UpdateHud(Hud *hud, float deltaTime) {
     // Vazio.
 }
 
-void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge) {
+// NOVO: Adicionei os estados dos power-ups
+void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives) {
     int fontSize = 20;
     int screenW = GetScreenWidth();
     int targetY = 10;
 
-    // --- Calcula as dimensões que serão usadas no desenho ---
-    float lifeTextureWidth = (hud->lifeIconTexture.id != 0) ? (float)hud->lifeIconTexture.width : 0.0f;
-    float lifeTextureHeight = (hud->lifeIconTexture.id != 0) ? (float)hud->lifeIconTexture.height : 0.0f;
-
-    float energyTextureWidth = (hud->energyIconTexture.id != 0) ? (float)hud->energyIconTexture.width : 0.0f;
-    float energyTextureHeight = (hud->energyIconTexture.id != 0) ? (float)hud->energyIconTexture.height : 0.0f;
+    // --- Cálculo das dimensões dos ícones (Todos usarão a mesma escala para padronizar) ---
+    float iconTextureWidth = 64.0f; // Exemplo de largura de ícone base
+    float iconTextureHeight = 64.0f; // Exemplo de altura de ícone base
+    // Assume-se que a textura de vida/energia será a base para o tamanho
+    if (hud->lifeIconTexture.id != 0) iconTextureWidth = (float)hud->lifeIconTexture.width;
+    if (hud->lifeIconTexture.id != 0) iconTextureHeight = (float)hud->lifeIconTexture.height;
 
     // Dimensões FINAIS (escaladas) para o desenho
-    float lifeDrawWidth = lifeTextureWidth * LIFE_ICON_HUD_SCALE;
-    float lifeDrawHeight = lifeTextureHeight * LIFE_ICON_HUD_SCALE;
-
-    float energyDrawWidth = energyTextureWidth * ENERGY_ICON_HUD_SCALE;
-    float energyDrawHeight = energyTextureHeight * ENERGY_ICON_HUD_SCALE;
+    float iconDrawWidth = iconTextureWidth * ICON_HUD_SCALE;
+    float iconDrawHeight = iconTextureHeight * ICON_HUD_SCALE;
 
     if (isLeft) {
-        // --- LADO ESQUERDO: Coração/Vidas e Ícone de Energia/Porcentagem ---
+        // --- LADO ESQUERDO: Coração/Vidas, Carga de Energia e Power-ups ---
+        int iconX = 10;
+        float currentY = (float)targetY;
 
         // 1. CORAÇÃO/VIDAS (Topo)
-        int iconX = 10;
-        float iconY = (float)targetY;
-
-        // Desenha o Coração
         if (hud->lifeIconTexture.id != 0) {
-            Rectangle sourceRecLife = { 0.0f, 0.0f, lifeTextureWidth, lifeTextureHeight };
-            Rectangle destRecLife = { (float)iconX, iconY, lifeDrawWidth, lifeDrawHeight };
+            Rectangle sourceRecLife = { 0.0f, 0.0f, iconTextureWidth, iconTextureHeight };
+            Rectangle destRecLife = { (float)iconX, currentY, iconDrawWidth, iconDrawHeight };
             DrawTexturePro(hud->lifeIconTexture, sourceRecLife, destRecLife, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
         }
 
         char livesText[10];
-        sprintf(livesText, "x%02d", hud->lives);
+        // Adiciona as vidas base + vidas extras compradas
+        sprintf(livesText, "x%02d", hud->lives + extraLives);
 
-        int textX = iconX + (int)lifeDrawWidth + 5;
-        int textY = (int)iconY + (int)lifeDrawHeight / 2 - fontSize / 2;
+        int textX = iconX + (int)iconDrawWidth + 5;
+        int textY = (int)currentY + (int)iconDrawHeight / 2 - fontSize / 2;
         DrawText(livesText, textX, textY, fontSize, WHITE);
+        currentY += iconDrawHeight + 15.0f;
 
 
-        // 2. ÍCONE DE ENERGIA E PORCENTAGEM (Embaixo do Coração)
-        if (hud->energyIconTexture.id == 0) return;
+        // 2. ÍCONE DE ENERGIA E PORCENTAGEM
+        if (hud->energyIconTexture.id != 0) {
+            // Desenha o Relâmpago
+            Rectangle energySourceRec = { 0.0f, 0.0f, (float)hud->energyIconTexture.width, (float)hud->energyIconTexture.height };
+            Rectangle energyDestRec = { (float)iconX, currentY, iconDrawWidth, iconDrawHeight };
 
-        float nominalIconY = iconY + lifeDrawHeight + 15.0f;
-        float finalIconX = 10.0f;
+            // Desenha o ícone de energia, mas ajusta a cor/alfa se não estiver carregando
+            Color energyColor = (energyCharge > 0.0f) ? WHITE : Fade(WHITE, 0.5f);
+            DrawTexturePro(hud->energyIconTexture, energySourceRec, energyDestRec, (Vector2){ 0.0f, 0.0f }, 0.0f, energyColor);
 
-        int textEnergyY = (int)nominalIconY;
+            // Desenha o texto de porcentagem
+            char chargeText[10];
+            sprintf(chargeText, "%d%%", (int)round(energyCharge));
 
-        float finalIconY = (float)textEnergyY + (float)fontSize / 2.0f - energyDrawHeight / 2.0f;
+            int textEnergyX = iconX + (int)iconDrawWidth + 5;
+            int textEnergyY = (int)currentY + (int)iconDrawHeight / 2 - fontSize / 2;
+            DrawText(chargeText, textEnergyX, textEnergyY, fontSize, WHITE);
+            currentY += iconDrawHeight + 15.0f;
+        }
 
-        // Desenha o Relâmpago
-        Rectangle energySourceRec = { 0.0f, 0.0f, energyTextureWidth, energyTextureHeight };
-        Rectangle energyDestRec = { finalIconX, finalIconY, energyDrawWidth, energyDrawHeight };
+        // 3. POWER-UPS ATIVOS (SOLICITAÇÃO 3: HUD)
+        // (O ícone de Carga de Energia já foi desenhado acima)
 
-        DrawTexturePro(hud->energyIconTexture, energySourceRec, energyDestRec, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+        // TIRO DUPLO
+        if (hasDoubleShot) {
+            if (hud->doubleShotTexture.id != 0) {
+                Rectangle source = { 0.0f, 0.0f, (float)hud->doubleShotTexture.width, (float)hud->doubleShotTexture.height };
+                Rectangle dest = { (float)iconX, currentY, iconDrawWidth, iconDrawHeight };
+                DrawTexturePro(hud->doubleShotTexture, source, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+                currentY += iconDrawHeight + 10.0f;
+            }
+        }
 
-        // --- Desenha o texto de porcentagem ---
-        char chargeText[10];
-        sprintf(chargeText, "%d%%", (int)round(energyCharge));
-
-        int textEnergyX = (int)(finalIconX + energyDrawWidth + 5);
-
-        DrawText(chargeText, textEnergyX, textEnergyY, fontSize, WHITE);
+        // ESCUDO
+        if (hasShield) {
+            if (hud->shieldTexture.id != 0) {
+                Rectangle source = { 0.0f, 0.0f, (float)hud->shieldTexture.width, (float)hud->shieldTexture.height };
+                Rectangle dest = { (float)iconX, currentY, iconDrawWidth, iconDrawHeight };
+                DrawTexturePro(hud->shieldTexture, source, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+                currentY += iconDrawHeight + 10.0f;
+            }
+        }
 
     } else {
         // --- LADO DIREITO: Apenas Score ---
@@ -102,22 +135,11 @@ void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge) {
         int scoreTextY = targetY;
         DrawText(scoreText, scoreTextX, scoreTextY, fontSize, WHITE);
     }
-
-    // Lógica de GAME OVER
-    if (hud->lives <= 0) {
-        int gameOverFontSize = 50;
-        const char *gameOverText = "GAME OVER";
-        int textWidth = MeasureText(gameOverText, gameOverFontSize);
-
-        DrawText(gameOverText,
-                 screenW / 2 - textWidth / 2,
-                 GetScreenHeight() / 2 - gameOverFontSize / 2,
-                 gameOverFontSize,
-                 RED);
-    }
 }
 
 void UnloadHud(Hud *hud) {
     if (hud->lifeIconTexture.id != 0) UnloadTexture(hud->lifeIconTexture);
     if (hud->energyIconTexture.id != 0) UnloadTexture(hud->energyIconTexture);
+    if (hud->doubleShotTexture.id != 0) UnloadTexture(hud->doubleShotTexture);
+    if (hud->shieldTexture.id != 0) UnloadTexture(hud->shieldTexture);
 }

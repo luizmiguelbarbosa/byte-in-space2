@@ -5,46 +5,58 @@
 #include "player.h"
 #include "star.h"
 #include "game_state.h"
-#include <stdbool.h> // Incluído para garantir que bool seja reconhecido em todos os compiladores
 
-#define MAX_ITEMS 3 // Definindo um limite máximo para o array de itens
+// Definições de itens
+#define MAX_SHOP_ITEMS 4
 
-// --- ESTRUTURA DO VENDEDOR ---
+typedef enum {
+    ITEM_ENERGY_CHARGE = 0,
+    ITEM_DOUBLE_SHOT,
+    ITEM_SHIELD,
+    ITEM_EXTRA_LIFE
+} ItemType;
+
+typedef struct {
+    Rectangle rect;
+    const char *name;
+    int price;
+    Color color;
+    bool active;
+    ItemType type;
+} ShopItem;
+
 typedef struct {
     Texture2D texture;
-    Vector2 position;
     Rectangle frameRec;
+    Vector2 position;
+    float scale;
     int currentFrame;
     float frameTimer;
     bool isHappy;
     float happyTimer;
-    float scale;       // nova: escala do sprite do vendedor
-    int frameCountX;   // colunas do sprite sheet
-    int frameCountY;   // linhas do sprite sheet (idle, happy, etc)
+    int frameCountX;
+    int frameCountY;
 } Vendor;
 
-// --- ESTRUTURA DO ITEM À VENDA ---
-typedef struct {
-    Rectangle rect;
-    const char* name;
-    int price;            // Preço do item
-    Color color;
-    bool active;
-} ShopItem;
 
-// --- GERENCIADOR DA CENA DA LOJA ---
 typedef struct {
     Vendor vendor;
-    ShopItem items[MAX_ITEMS];
-    char dialogText[256]; // Aumentei o tamanho para 256 para o texto de diálogo mais longo
+    ShopItem items[MAX_SHOP_ITEMS];
+    Texture2D itemTextures[MAX_SHOP_ITEMS];
+
+    Rectangle exitArea;
+
+    float portalParallaxOffset;
+
+    char dialogText[256];
     bool itemBought;
-
-    // CORREÇÃO: Membro 'itemFocused' adicionado para resolver o erro de compilação
+    float particleTimer;
+    bool showParticles;
     bool itemFocused;
-
 } ShopScene;
 
-void InitShop(ShopScene *shop, int gameWidth, int gameHeight);
+// AJUSTE: Adicionando Player* à assinatura
+void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight);
 void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *state, float deltaTime);
 void DrawShop(ShopScene *shop, Player *player, StarField *stars);
 void UnloadShop(ShopScene *shop);

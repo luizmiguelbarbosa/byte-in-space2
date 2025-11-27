@@ -1,0 +1,35 @@
+// crt.fs
+#version 330
+
+// Valores que Raylib passa automaticamente
+in vec2 fragTexCoord;
+in vec4 fragColor;
+out vec4 finalColor;
+
+// A textura da sua Render Texture (a cena do jogo)
+uniform sampler2D textureSampler;
+
+// Propriedades da tela para simulação
+uniform float time;
+uniform vec2 resolution; // 800x600
+
+// --- Efeito CRT ---
+void main() {
+    vec2 uv = fragTexCoord;
+    vec4 color = texture(textureSampler, uv);
+
+    // 1. Linhas de Varredura (Scanlines)
+    // Linhas horizontais que simulam a varredura do tubo.
+    float scanline_intensity = 0.25;
+    float scanline = sin(uv.y * resolution.y * 3.14159 * 2.0);
+    color.rgb *= 1.0 - scanline_intensity * (0.5 + 0.5 * scanline);
+
+    // 2. Vinhetas (Bordas escuras)
+    vec2 pos = uv - 0.5;
+    float len = length(pos);
+    // Escurece as bordas, simulando a queda de brilho do tubo.
+    float vignette = smoothstep(0.7, 0.3, len);
+    color.rgb *= vignette;
+
+    finalColor = color;
+}
