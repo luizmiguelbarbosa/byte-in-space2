@@ -84,6 +84,7 @@ CMakeFiles/byte_in_space2.dir/src/enemy.c.obj: C:/Users/lmsbn/byte/src/enemy.c \
   C:/Program\ Files/JetBrains/CLion\ 2025.2/bin/mingw/x86_64-w64-mingw32/include/vadefs.h \
   C:/Users/lmsbn/byte/external/raylib_windows/include/raylib.h \
   C:/Users/lmsbn/byte/external/raylib_windows/include/raymath.h \
+  C:/Users/lmsbn/byte/include/audio.h \
   C:/Users/lmsbn/byte/include/bullet.h \
   C:/Users/lmsbn/byte/include/enemy.h
 

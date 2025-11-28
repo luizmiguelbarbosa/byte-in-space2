@@ -1,15 +1,18 @@
 #include "enemy.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "audio.h"
+#include "bullet.h" // NOVO: Incluído para resolver conflitos de tipos e definir Bullet/BulletManager/MAX_PLAYER_BULLETS
 #include <stdio.h>
-#include <math.h> // Para cosf e sinf
+#include <math.h>
+
+// As definições de BulletManager e Bullet são fornecidas por "bullet.h".
 
 // --- Cores Neon (Baseadas nos tipos de ataque que você já usa) ---
 #define COLOR_NEON_BLUE (CLITERAL(Color){ 0, 191, 255, 255 })     // Tipo 1 - Fraco
 #define COLOR_NEON_PURPLE (CLITERAL(Color){ 128, 0, 255, 255 })  // Tipo 2 - Médio
 #define COLOR_NEON_RED (CLITERAL(Color){ 255, 69, 0, 255 })      // Tipo 3 - Forte/Líder
 #define COLOR_EXPLOSION_ORANGE (CLITERAL(Color){ 255, 165, 0, 255 })
-
 
 // NOVO: CONSTANTE DE PARTÍCULAS
 #define EXPLOSION_PARTICLE_COUNT 100
@@ -23,7 +26,6 @@
 
 // --- IMPLEMENTAÇÃO DO SISTEMA DE PARTÍCULAS ---
 
-// Inicializa o gerenciador de partículas
 void InitParticleManager(ParticleManager *manager) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
         manager->particles[i].active = false;
@@ -31,7 +33,6 @@ void InitParticleManager(ParticleManager *manager) {
     manager->nextParticleIndex = 0;
 }
 
-// Retorna uma cor vibrante para as partículas
 Color GetRandomNeonColor() {
     int r = GetRandomValue(0, 5);
     switch (r) {
@@ -45,7 +46,6 @@ Color GetRandomNeonColor() {
     }
 }
 
-// Cria um conjunto de partículas no momento da explosão
 void ExplodeEnemy(EnemyManager *manager, Vector2 position, int particleCount) {
     ParticleManager *pm = &manager->particleManager;
     for (int i = 0; i < particleCount; i++) {
@@ -67,7 +67,6 @@ void ExplodeEnemy(EnemyManager *manager, Vector2 position, int particleCount) {
     }
 }
 
-// Atualiza a posição e o tempo de vida das partículas
 void UpdateParticles(ParticleManager *manager, float deltaTime) {
     // Estas constantes são usadas apenas para o ricochete das partículas
     const int GAME_WIDTH = 800;
@@ -102,7 +101,6 @@ void UpdateParticles(ParticleManager *manager, float deltaTime) {
     }
 }
 
-// Desenha as partículas ativas
 void DrawParticles(ParticleManager *manager) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
         Particle *p = &manager->particles[i];
@@ -185,7 +183,6 @@ void DrawExplosion(Enemy *enemy) {
 }
 
 
-// Função para inicializar a grade de inimigos para uma wave específica
 void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight, int waveNumber) {
     // 1. Dificuldade e Multiplicadores
     // Aumenta a velocidade base a cada wave (15% por wave)
@@ -249,7 +246,6 @@ void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight
 
 void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight) {
     // --- CARREGAMENTO DE TEXTURAS ---
-    // (Presume-se que o código de carregamento de texturas esteja correto)
     manager->enemyTextures[0] = LoadTexture("assets/images/sprites/inimigo_1.png"); // Tipo 1
     manager->enemyTextures[1] = LoadTexture("assets/images/sprites/inimigo_2.png"); // Tipo 2
     manager->enemyTextures[2] = LoadTexture("assets/images/sprites/inimigo_3.png"); // Tipo 3
@@ -375,30 +371,26 @@ void DrawEnemies(EnemyManager *manager) {
             DrawExplosion(enemy);
 
         } else if (enemy->active) {
+            // Acesso a BulletManager e Bullet removido daqui.
             Texture2D texture = manager->enemyTextures[enemy->type - 1];
             DrawEnemy(enemy, texture);
         }
     }
 
-    // 3. NOVO: Desenha a tela de transição da Wave
+    // 3. Desenha a tela de transição da Wave
     if (manager->waveStartTimer > 0.0f) {
         char waveText[64];
         sprintf(waveText, "WAVE %d", manager->currentWave);
 
-        // --- CORREÇÃO DE CENTRALIZAÇÃO ---
-        // Usamos 800x600, pois é o tamanho mais provável do Render Target do jogo,
-        // que é escalado para caber na tela 1920x1080.
         const int GAME_LOGIC_WIDTH = 800;
         const int GAME_LOGIC_HEIGHT = 600;
 
         int fontSize = 100;
         int textWidth = MeasureText(waveText, fontSize);
 
-        // Centralização usando o viewport lógico (800x600)
         int textX = GAME_LOGIC_WIDTH / 2 - textWidth / 2;
         int textY = GAME_LOGIC_HEIGHT / 2 - fontSize / 2;
 
-        // Calcula a cor e o fade-out
         float fadeOut = manager->waveStartTimer / WAVE_START_DURATION;
 
         // --- 1. DESENHA FUNDO (GARANTIA DE VISIBILIDADE) ---
@@ -406,7 +398,6 @@ void DrawEnemies(EnemyManager *manager) {
         int backgroundPaddingX = 40;
         int backgroundPaddingY = 20;
 
-        // Cria um retângulo de fundo baseado na posição e tamanho do texto
         Rectangle backgroundRect = {
             (float)(textX - backgroundPaddingX),
             (float)(textY - backgroundPaddingY),
@@ -449,7 +440,9 @@ void UnloadEnemyManager(EnemyManager *manager) {
     }
 }
 
-void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold) {
+// A função CheckBulletEnemyCollision agora usa as definições de Bullet e BulletManager
+// fornecidas pelo cabeçalho bullet.h.
+void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager) {
     // Só verifica a colisão se o timer da wave não estiver ativo
     if (enemyManager->activeCount == 0 || enemyManager->waveStartTimer > 0.0f) return;
 
@@ -467,6 +460,9 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
                 enemy->hitTimer = ENEMY_FLASH_DURATION;
 
                 if (enemy->health <= 0) {
+                    // NOVO: Toca o som de explosão do inimigo
+                    PlayEnemyExplosionSfx(audioManager);
+
                     enemy->isExploding = true;
                     enemy->explosionTimer = ENEMY_EXPLOSION_DURATION;
 

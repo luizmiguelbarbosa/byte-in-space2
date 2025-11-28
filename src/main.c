@@ -148,7 +148,8 @@ int main(void) {
                     // NOVO: Atualiza a posição dos inimigos
                     UpdateEnemies(&enemyManager, dt, GAME_WIDTH);
                     // NOVO: Verifica colisões entre balas e inimigos e adiciona gold
-                    CheckBulletEnemyCollision(&bulletManager, &enemyManager, &player.gold);
+                    // CORRIGIDO: Adicionado o quarto argumento (audioManager)
+                    CheckBulletEnemyCollision(&bulletManager, &enemyManager, &player.gold, &audioManager);
                 }
                 break;
         }

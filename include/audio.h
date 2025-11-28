@@ -23,12 +23,14 @@ typedef struct AudioManager {
     Sound sfxMedium;
     Sound sfxStrong;
     Sound sfxCharge;
+    Sound sfxExplosionEnemy; // NOVO: Som de explosão do inimigo
 } AudioManager;
 
 void InitAudioManager(AudioManager *manager);
 void UpdateAudioManager(AudioManager *manager);
 void PlayMusicTrack(AudioManager *manager, MusicType type);
 void PlayAttackSfx(AudioManager *manager, int attackType);
+void PlayEnemyExplosionSfx(AudioManager *manager); // NOVO: Função para tocar a explosão
 void UnloadAudioManager(AudioManager *manager);
 
 #endif // AUDIO_H

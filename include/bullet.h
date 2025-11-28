@@ -18,7 +18,9 @@ typedef struct {
     int type;
 } Bullet;
 
-typedef struct {
+// CORREÇÃO: O struct agora é nomeado (struct BulletManager)
+// Isso resolve o conflito de tipos com a declaração em enemy.h e o erro de "storage size" em main.c.
+typedef struct BulletManager {
     Bullet bullets[MAX_PLAYER_BULLETS];
     Texture2D weakTexture;
     Texture2D mediumTexture;

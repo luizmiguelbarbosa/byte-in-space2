@@ -19,7 +19,7 @@ CMakeFiles/byte_in_space2.dir/src/main.c.obj: \
  C:/Users/lmsbn/byte/include/star.h \
  C:/Users/lmsbn/byte/include/game_state.h \
  C:/Users/lmsbn/byte/include/cutscene.h \
- C:/Users/lmsbn/byte/include/enemy.h \
+ C:/Users/lmsbn/byte/include/enemy.h C:/Users/lmsbn/byte/include/audio.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2/bin/mingw/x86_64-w64-mingw32/include/stdio.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2/bin/mingw/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2/bin/mingw/x86_64-w64-mingw32/include/corecrt.h \
