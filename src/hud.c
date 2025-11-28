@@ -5,7 +5,7 @@
 
 // --- DEFINIÇÕES DE CAMINHOS ---
 #define LIFE_ICON_PATH "assets/images/sprites/life_icon_large.png"
-#define ENERGY_ICON_PATH "C:/Users/luiz1/byte/assets/images/sprites/energy_icon.png" // SOLICITAÇÃO 2
+#define ENERGY_ICON_PATH "assets/images/sprites/energy_icon.png" 
 
 // --- PATHS DOS POWER-UPS ---
 #define DOUBLE_SHOT_PATH "assets/images/sprites/tiroduplo.png"
@@ -142,4 +142,5 @@ void UnloadHud(Hud *hud) {
     if (hud->energyIconTexture.id != 0) UnloadTexture(hud->energyIconTexture);
     if (hud->doubleShotTexture.id != 0) UnloadTexture(hud->doubleShotTexture);
     if (hud->shieldTexture.id != 0) UnloadTexture(hud->shieldTexture);
+
 }
