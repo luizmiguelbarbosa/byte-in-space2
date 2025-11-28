@@ -2,11 +2,9 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "audio.h"
-#include "bullet.h" // NOVO: Incluído para resolver conflitos de tipos e definir Bullet/BulletManager/MAX_PLAYER_BULLETS
+#include "bullet.h"
 #include <stdio.h>
 #include <math.h>
-
-// As definições de BulletManager e Bullet são fornecidas por "bullet.h".
 
 // --- Cores Neon (Baseadas nos tipos de ataque que você já usa) ---
 #define COLOR_NEON_BLUE (CLITERAL(Color){ 0, 191, 255, 255 })     // Tipo 1 - Fraco
@@ -14,11 +12,11 @@
 #define COLOR_NEON_RED (CLITERAL(Color){ 255, 69, 0, 255 })      // Tipo 3 - Forte/Líder
 #define COLOR_EXPLOSION_ORANGE (CLITERAL(Color){ 255, 165, 0, 255 })
 
-// NOVO: CONSTANTE DE PARTÍCULAS
+// CONSTANTE DE PARTÍCULAS
 #define EXPLOSION_PARTICLE_COUNT 100
 
-// NOVOS VALORES PARA O SISTEMA DE ONDAS (WAVES)
-#define WAVE_START_DURATION 3.0f // Tempo de exibição da mensagem "Wave X"
+// VALORES PARA O SISTEMA DE ONDAS
+#define WAVE_START_DURATION 3.0f
 #define ENEMY_INITIAL_HEALTH_T1 1
 #define ENEMY_INITIAL_HEALTH_T2 2
 #define ENEMY_INITIAL_HEALTH_T3 4
@@ -68,7 +66,6 @@ void ExplodeEnemy(EnemyManager *manager, Vector2 position, int particleCount) {
 }
 
 void UpdateParticles(ParticleManager *manager, float deltaTime) {
-    // Estas constantes são usadas apenas para o ricochete das partículas
     const int GAME_WIDTH = 800;
     const int GAME_HEIGHT = 600;
 
@@ -109,7 +106,7 @@ void DrawParticles(ParticleManager *manager) {
         float alpha = p->life / PARTICLE_LIFESPAN;
         Color drawColor = Fade(p->color, alpha);
 
-        // Raio das partículas aumentado para 3.0f
+        // Raio das partículas
         DrawCircleV(p->position, 3.0f, drawColor);
     }
 }
@@ -252,7 +249,12 @@ void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight) 
 
     // Configuração inicial do sistema de Waves
     manager->currentWave = 1;
-    manager->waveStartTimer = WAVE_START_DURATION;
+    manager->waveStartTimer = WAVE_START_DURATION; // Começa pausado
+
+    // NOVOS CAMPOS PARA O SHOP
+    manager->wavesCompletedCount = 0; // Inicializa o contador de waves
+    manager->triggerShopReturn = false; // Nenhuma volta ao shop no início
+    // FIM NOVOS CAMPOS
 
     InitParticleManager(&manager->particleManager);
 
@@ -260,27 +262,65 @@ void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight) 
     InitEnemiesForWave(manager, screenWidth, screenHeight, manager->currentWave);
 }
 
+// LÓGICA DE TRANSIÇÃO DE WAVE OU SHOP
+void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeight) {
+    // Verifica se a wave anterior foi completada (activeCount == 0)
+    if (manager->activeCount == 0) {
+
+        // 1. Incrementa o contador de waves completadas
+        manager->wavesCompletedCount++;
+
+        // 2. Verifica o gatilho do Shop (a cada 3 waves)
+        if (manager->wavesCompletedCount % 3 == 0) {
+            manager->triggerShopReturn = true;
+            // IMPORTANTE: Não iniciar a próxima wave aqui, o main.c fará a transição para STATE_SHOP.
+        } else {
+            // 3. Se não for hora do Shop, inicie a próxima wave normalmente.
+            manager->currentWave++;
+            manager->waveStartTimer = WAVE_START_DURATION;
+            // Reinicializa a grade de inimigos com dificuldade maior
+            InitEnemiesForWave(manager, screenWidth, screenHeight, manager->currentWave);
+        }
+    }
+}
+
 void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth) {
+    int screenHeight = 600; // Usando o GAME_HEIGHT definido no main.c
 
     // 1. Lógica do Timer de Início da Wave
     if (manager->waveStartTimer > 0.0f) {
         manager->waveStartTimer -= deltaTime;
-        // Atualiza apenas as partículas (se houver explosões remanescentes da wave anterior)
+
+        // Permite que as partículas continuem se movendo/desvanecendo.
         UpdateParticles(&manager->particleManager, deltaTime);
-        return; // Impede o movimento e colisão enquanto a mensagem da wave é exibida
+
+        // Se o timer ainda estiver rodando, saímos antes de mover os inimigos e verificar conclusão.
+        if (manager->waveStartTimer > 0.0f) {
+             return;
+        }
+
+        // Se o timer acabou (waveStartTimer <= 0.0f), o jogo continua a partir daqui.
     }
 
     // 2. Verificação de Fim de Wave e Transição
-    if (manager->activeCount == 0) {
-        // Todos os inimigos destruídos!
-        manager->currentWave++;
-        manager->waveStartTimer = WAVE_START_DURATION;
-        // Reinicializa a grade de inimigos com dificuldade maior
-        InitEnemiesForWave(manager, screenWidth, GetScreenHeight(), manager->currentWave);
+    // Se activeCount == 0 E a lógica do shop não estiver acionada, tentamos avançar.
+    if (manager->activeCount == 0 && !manager->triggerShopReturn) {
+        CheckWaveCompletion(manager, screenWidth, screenHeight);
+    }
+
+    // Se o shop foi acionado, ou se uma nova wave foi iniciada e seu timer está ativo, saímos antes do movimento.
+    // O timerStart > 0.0f já garante o retorno no bloco acima, mas o triggerShopReturn precisa ser verificado.
+    if (manager->triggerShopReturn || manager->waveStartTimer > 0.0f) {
+        // Se estiver em transição (Shop ou Novo Wave Timer), apenas atualiza partículas.
+        UpdateParticles(&manager->particleManager, deltaTime);
         return;
     }
 
-    if (manager->gameOver) return;
+    if (manager->gameOver) {
+        // Se for Game Over, apenas atualiza partículas e retorna
+        UpdateParticles(&manager->particleManager, deltaTime);
+        return;
+    }
 
     // 3. Atualiza o sistema de partículas (movimento e fade)
     UpdateParticles(&manager->particleManager, deltaTime);
@@ -371,108 +411,91 @@ void DrawEnemies(EnemyManager *manager) {
             DrawExplosion(enemy);
 
         } else if (enemy->active) {
-            // Acesso a BulletManager e Bullet removido daqui.
-            Texture2D texture = manager->enemyTextures[enemy->type - 1];
+            // Determina qual textura usar
+            Texture2D texture;
+            switch (enemy->type) {
+                case 1: texture = manager->enemyTextures[0]; break;
+                case 2: texture = manager->enemyTextures[1]; break;
+                case 3: texture = manager->enemyTextures[2]; break;
+                default: texture = manager->enemyTextures[0]; break;
+            }
             DrawEnemy(enemy, texture);
         }
     }
 
-    // 3. Desenha a tela de transição da Wave
-    if (manager->waveStartTimer > 0.0f) {
-        char waveText[64];
-        sprintf(waveText, "WAVE %d", manager->currentWave);
-
-        const int GAME_LOGIC_WIDTH = 800;
-        const int GAME_LOGIC_HEIGHT = 600;
-
-        int fontSize = 100;
-        int textWidth = MeasureText(waveText, fontSize);
-
-        int textX = GAME_LOGIC_WIDTH / 2 - textWidth / 2;
-        int textY = GAME_LOGIC_HEIGHT / 2 - fontSize / 2;
-
-        float fadeOut = manager->waveStartTimer / WAVE_START_DURATION;
-
-        // --- 1. DESENHA FUNDO (GARANTIA DE VISIBILIDADE) ---
-
-        int backgroundPaddingX = 40;
-        int backgroundPaddingY = 20;
-
-        Rectangle backgroundRect = {
-            (float)(textX - backgroundPaddingX),
-            (float)(textY - backgroundPaddingY),
-            (float)(textWidth + backgroundPaddingX * 2),
-            (float)(fontSize + backgroundPaddingY * 2)
-        };
-
-        Color backgroundColor = Fade(BLACK, fadeOut * 0.85f); // Fundo preto semi-transparente
-        DrawRectangleRec(backgroundRect, backgroundColor);
-
-        // --- 2. DESENHA O TEXTO ---
-
-        Color waveColor = Fade(GOLD, fadeOut);
-
-        // Desenha a sombra (outline) primeiro (deslocamento de 3 pixels)
-        Color shadowColor = Fade(BLACK, fadeOut * 0.7f);
-        DrawText(
-            waveText,
-            textX + 3,
-            textY + 3,
-            fontSize,
-            shadowColor
-        );
-
-        // Desenha o texto principal
-        DrawText(
-            waveText,
-            textX,
-            textY,
-            fontSize,
-            waveColor
-        );
-    }
+    // 3. REMOVIDO: A lógica de desenho da mensagem de início de wave
+    // foi movida para DrawWaveStartUI no main.c, onde é desenhada sobre
+    // o alvo (800x600) para garantir a escala correta.
 }
 
-// Função para descarregar as texturas da EnemyManager
 void UnloadEnemyManager(EnemyManager *manager) {
     for (int i = 0; i < 3; i++) {
-        UnloadTexture(manager->enemyTextures[i]);
+        if (manager->enemyTextures[i].id != 0) UnloadTexture(manager->enemyTextures[i]);
     }
+    // Não precisamos de UnloadParticleManager, pois as partículas são apenas dados em array.
 }
 
-// A função CheckBulletEnemyCollision agora usa as definições de Bullet e BulletManager
-// fornecidas pelo cabeçalho bullet.h.
-void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager) {
-    // Só verifica a colisão se o timer da wave não estiver ativo
-    if (enemyManager->activeCount == 0 || enemyManager->waveStartTimer > 0.0f) return;
+// --- IMPLEMENTAÇÃO DA FUNÇÃO DE COLISÃO (CORRIGIDA) ---
 
+// Lógica de Colisão
+void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager) {
+    // Itera sobre todos os projéteis ativos do jogador (MAX_PLAYER_BULLETS é definido em bullet.h)
     for (int i = 0; i < MAX_PLAYER_BULLETS; i++) {
         Bullet *bullet = &bulletManager->bullets[i];
+
         if (!bullet->active) continue;
 
+        // 1. Obter a posição e o raio da bala a partir do campo 'rect'
+        Vector2 bulletCenter = {
+            bullet->rect.x + bullet->rect.width / 2.0f,
+            bullet->rect.y + bullet->rect.height / 2.0f
+        };
+        // Usamos a metade da largura como uma aproximação do raio para a colisão circular
+        float bulletRadius = bullet->rect.width / 2.0f;
+
+        // Itera sobre todos os inimigos
         for (int j = 0; j < ENEMY_COUNT; j++) {
             Enemy *enemy = &enemyManager->enemies[j];
+
+            // Pula inimigos inativos ou já em explosão
             if (!enemy->active || enemy->isExploding) continue;
 
-            if (CheckCollisionRecs(bullet->rect, enemy->rect)) {
+            // Define o raio de colisão do inimigo (aproximação do tamanho ENEMY_SIZE)
+            float enemyRadius = ENEMY_SIZE / 2.0f;
+
+            // Verifica colisão entre a bala (círculo) e o inimigo (círculo)
+            if (CheckCollisionCircles(bulletCenter, bulletRadius, enemy->position, enemyRadius)) {
+
+                // 2. Colisão detectada! Desativa o projétil.
                 bullet->active = false;
-                enemy->health -= 1;
-                enemy->hitTimer = ENEMY_FLASH_DURATION;
+
+                // 3. Decrementa a vida do inimigo
+                enemy->health--;
+                enemy->hitTimer = ENEMY_FLASH_DURATION; // Ativa o efeito visual de acerto (hit flash)
 
                 if (enemy->health <= 0) {
-                    // NOVO: Toca o som de explosão do inimigo
-                    PlayEnemyExplosionSfx(audioManager);
-
+                    // Morte do inimigo
+                    enemy->active = false;
                     enemy->isExploding = true;
                     enemy->explosionTimer = ENEMY_EXPLOSION_DURATION;
+                    enemyManager->activeCount--; // Decrementa a contagem de inimigos ativos na wave
 
+                    // Recompensa e Áudio
+                    *playerGold += 5 + (enemy->type * 5); // Adiciona Gold
+
+                    // CORREÇÃO: Usando o nome correto do membro de áudio: sfxExplosionEnemy
+                    PlaySound(audioManager->sfxExplosionEnemy);
+
+                    // Efeito de explosão (partículas)
                     ExplodeEnemy(enemyManager, enemy->position, EXPLOSION_PARTICLE_COUNT);
 
-                    enemy->active = false;
-                    enemyManager->activeCount--;
-
-                    *playerGold += enemy->type * 5;
+                } else {
+                    // Apenas acerto
+                    // O seu audio.h não possui sfxEnemyHit, então vamos usar o som mais fraco (sfxWeak) como feedback
+                    PlaySound(audioManager->sfxWeak);
                 }
+
+                // Sai do loop de inimigos, pois o tiro já foi consumido
                 break;
             }
         }

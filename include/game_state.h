@@ -1,12 +1,12 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-typedef enum {
-    STATE_CUTSCENE = 0, // Estado inicial: Cutscene
-    STATE_SHOP,         // Loja
-    STATE_GAMEPLAY,     // Jogabilidade principal
-    STATE_PAUSE,        // Jogo pausado
-    STATE_MENU          // Menu Principal (se implementado)
+typedef enum GameState {
+    STATE_TITLE = 0,
+    STATE_GAMEPLAY,
+    STATE_SHOP,
+    STATE_GAME_OVER,
+    STATE_CUTSCENE
 } GameState;
 
 #endif // GAME_STATE_H

@@ -60,13 +60,15 @@ typedef struct {
     int currentWave;
     float waveStartTimer;
 
+    // NOVOS CAMPOS PARA O SHOP
+    int wavesCompletedCount;      // Rastreia o total de waves completadas na sessão
+    bool triggerShopReturn;      // Sinaliza para o main.c que é hora de ir para o Shop
+    // FIM NOVOS CAMPOS
+
     ParticleManager particleManager;
 } EnemyManager;
 
 // Forward declaration para BulletManager.
-// Isso permite usar 'BulletManager *' nas assinaturas de função abaixo.
-// NOTA: Se 'bullet.h' define BulletManager como 'typedef struct { ... } BulletManager;',
-// esta declaração não causará conflito, mas é importante que 'bullet.h' não use 'typedef struct BulletManager BulletManager;'
 typedef struct BulletManager BulletManager;
 
 
@@ -78,8 +80,10 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth);
 void DrawEnemies(EnemyManager *manager);
 void UnloadEnemyManager(EnemyManager *manager);
 
+// NOVO: Função para verificar o fim da wave e atualizar o contador (Chamada por UpdateEnemies)
+void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeight);
+
 // Lógica de Colisão
-// ASSINATURA CORRIGIDA: Usa o 'typedef' BulletManager que foi forward-declared acima.
 void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager);
 
 #endif // ENEMY_H
