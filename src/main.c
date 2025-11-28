@@ -7,6 +7,7 @@
 #include "game_state.h"
 #include "shop.h"
 #include "cutscene.h"
+#include "enemy.h" // NOVO: Inclusão do header de inimigos
 #include <stdio.h>
 
 #define GAME_WIDTH 800
@@ -60,6 +61,10 @@ int main(void) {
 
     BulletManager bulletManager;
     InitBulletManager(&bulletManager);
+
+    // NOVO: Inicialização do Gerenciador de Inimigos
+    EnemyManager enemyManager;
+    InitEnemyManager(&enemyManager, GAME_WIDTH, GAME_HEIGHT);
 
     AudioManager audioManager;
     InitAudioManager(&audioManager);
@@ -125,6 +130,8 @@ int main(void) {
                 UpdatePlayerBullets(&bulletManager, dt);
 
                 if (currentState == STATE_GAMEPLAY) {
+                    // Reinicializa os inimigos quando o GAMEPLAY começa
+                    InitEnemyManager(&enemyManager, GAME_WIDTH, GAME_HEIGHT);
                     StopMusicStream(audioManager.musicShop);
                     PlayMusicTrack(&audioManager, MUSIC_GAMEPLAY);
                 }
@@ -133,8 +140,16 @@ int main(void) {
             case STATE_GAMEPLAY:
                 UpdateStarField(&starField, dt);
                 UpdateHud(&hud, dt);
-                UpdatePlayer(&player, &bulletManager, &audioManager, &hud, dt, GAME_WIDTH, GAME_HEIGHT);
-                UpdatePlayerBullets(&bulletManager, dt);
+
+                // NOVO: Só atualiza a lógica do jogo se não for Game Over
+                if (!enemyManager.gameOver) {
+                    UpdatePlayer(&player, &bulletManager, &audioManager, &hud, dt, GAME_WIDTH, GAME_HEIGHT);
+                    UpdatePlayerBullets(&bulletManager, dt);
+                    // NOVO: Atualiza a posição dos inimigos
+                    UpdateEnemies(&enemyManager, dt, GAME_WIDTH);
+                    // NOVO: Verifica colisões entre balas e inimigos e adiciona gold
+                    CheckBulletEnemyCollision(&bulletManager, &enemyManager, &player.gold);
+                }
                 break;
         }
 
@@ -154,8 +169,17 @@ int main(void) {
 
                 case STATE_GAMEPLAY:
                     DrawStarField(&starField);
+                    // NOVO: Desenha os inimigos
+                    DrawEnemies(&enemyManager);
                     DrawPlayer(&player);
                     DrawPlayerBullets(&bulletManager);
+
+                    // NOVO: Tela de Game Over
+                    if (enemyManager.gameOver) {
+                        DrawRectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, Fade(BLACK, 0.8f));
+                        DrawText("GAME OVER", GAME_WIDTH/2 - MeasureText("GAME OVER", 40)/2, GAME_HEIGHT/2 - 20, 40, RED);
+                        DrawText("OS INIMIGOS TE ALCANÇARAM!", GAME_WIDTH/2 - MeasureText("OS INIMIGOS TE ALCANÇARAM!", 20)/2, GAME_HEIGHT/2 + 30, 20, WHITE);
+                    }
                     break;
             }
         EndTextureMode();
@@ -186,6 +210,8 @@ int main(void) {
                 DrawHudSide(&hud, false, offsetY, 0.0f, false, false, 0);
             }
 
+            // Exibir Gold para debug ou feedback visual
+            DrawText(TextFormat("GOLD: %d", player.gold), 10, 70, 20, YELLOW);
             DrawFPS(10, 50);
 
         EndDrawing();

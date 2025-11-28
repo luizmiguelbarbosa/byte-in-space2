@@ -72,15 +72,15 @@
 			[
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/luiz1/byte/external/raylib_windows/include"
+					"path" : "C:/Users/lmsbn/byte/external/raylib_windows/include"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/luiz1/byte/include"
+					"path" : "C:/Users/lmsbn/byte/include"
 				},
 				{
 					"backtrace" : 5,
-					"path" : "C:/Users/luiz1/byte/src"
+					"path" : "C:/Users/lmsbn/byte/src"
 				}
 			],
 			"language" : "C",
@@ -120,7 +120,7 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "-LC:\\Users\\luiz1\\byte\\external\\raylib_windows\\lib",
+				"fragment" : "-LC:\\Users\\lmsbn\\byte\\external\\raylib_windows\\lib",
 				"role" : "libraryPath"
 			},
 			{
