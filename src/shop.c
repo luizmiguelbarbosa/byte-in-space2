@@ -76,7 +76,7 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
 
     // NOVOS PREÇOS AUMENTADOS
     shop->items[0] = (ShopItem){ { startX, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "Carga de Energia", 0, WHITE, true, ITEM_ENERGY_CHARGE };
-    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "SHURIKENS CANINAS", 750, RED, true, ITEM_SHURIKEN };
+    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "SHURIKENS", 750, RED, true, ITEM_SHURIKEN };
     shop->items[2] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 2, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "ESCUDO", 1500, BLUE, true, ITEM_SHIELD };
     shop->items[3] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 3, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "VIDA EXTRA", 2250, GREEN, true, ITEM_EXTRA_LIFE };
 
@@ -256,7 +256,7 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
     );
 
     DrawRectangleGradientV(
-        (int)portalVisualRect.x,
+        (int)portalDrawCenterX - (int)portalVisualRect.width / 2,
         (int)portalVisualRect.y,
         (int)portalVisualRect.width,
         (int)portalVisualRect.height,
