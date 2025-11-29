@@ -2,7 +2,7 @@
 #define ENEMY_H
 
 #include "raylib.h"
-#include "audio.h" // Incluído para a nova função de colisão
+#include "audio.h"
 
 // Definições e constantes para inimigos
 #define ENEMY_COLS 11
@@ -15,7 +15,8 @@
 #define ENEMY_DROP_AMOUNT 20.0f
 #define ENEMY_FLASH_DURATION 0.1f
 #define ENEMY_EXPLOSION_DURATION 0.4f
-#define ENEMY_GAME_OVER_Y 550.0f // Posição Y que define o Game Over
+#define ENEMY_GAME_OVER_Y 550.0f // Posição Y que define o Game Over (legado, agora usamos a linha)
+#define ENEMY_GAME_OVER_LINE_Y 500.0f // NOVO: Posição Y da linha de Game Over (verde neon)
 
 // Partículas
 #define MAX_PARTICLES 500
@@ -60,6 +61,9 @@ typedef struct {
     int currentWave;
     float waveStartTimer;
 
+    // NOVO CAMPO
+    int gameHeight; // Altura do jogo (600) para checagem de Game Over
+
     // NOVOS CAMPOS PARA O SHOP
     int wavesCompletedCount;      // Rastreia o total de waves completadas na sessão
     bool triggerShopReturn;      // Sinaliza para o main.c que é hora de ir para o Shop
@@ -76,7 +80,8 @@ typedef struct BulletManager BulletManager;
 
 // Gerenciador de Inimigos
 void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight);
-void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth);
+// PROTÓTIPO CORRIGIDO: Adiciona ponteiros para playerLives e gameOver
+void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int *playerLives, bool *gameOver);
 void DrawEnemies(EnemyManager *manager);
 void UnloadEnemyManager(EnemyManager *manager);
 

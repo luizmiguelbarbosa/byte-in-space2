@@ -5,12 +5,14 @@
 #include "bullet.h"
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 
 // --- Cores Neon (Baseadas nos tipos de ataque que você já usa) ---
 #define COLOR_NEON_BLUE (CLITERAL(Color){ 0, 191, 255, 255 })     // Tipo 1 - Fraco
 #define COLOR_NEON_PURPLE (CLITERAL(Color){ 128, 0, 255, 255 })  // Tipo 2 - Médio
 #define COLOR_NEON_RED (CLITERAL(Color){ 255, 69, 0, 255 })      // Tipo 3 - Forte/Líder
 #define COLOR_EXPLOSION_ORANGE (CLITERAL(Color){ 255, 165, 0, 255 })
+#define COLOR_NEON_GREEN (CLITERAL(Color){ 0, 255, 0, 255 })     // Cor verde neon
 
 // CONSTANTE DE PARTÍCULAS
 #define EXPLOSION_PARTICLE_COUNT 100
@@ -197,6 +199,7 @@ void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight
     manager->direction = 1;
     manager->activeCount = ENEMY_COUNT;
     manager->gameOver = false;
+    manager->gameHeight = screenHeight; // Salva a altura do jogo
 
     const float COLLISION_MARGIN = 5.0f;
     const float COLLISION_DIMENSION = ENEMY_SIZE + COLLISION_MARGIN * 2;
@@ -250,6 +253,7 @@ void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight) 
     // Configuração inicial do sistema de Waves
     manager->currentWave = 1;
     manager->waveStartTimer = WAVE_START_DURATION; // Começa pausado
+    manager->gameHeight = screenHeight; // Armazena a altura do jogo (normalmente 600)
 
     // NOVOS CAMPOS PARA O SHOP
     manager->wavesCompletedCount = 0; // Inicializa o contador de waves
@@ -284,8 +288,9 @@ void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeigh
     }
 }
 
-void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth) {
-    int screenHeight = 600; // Usando o GAME_HEIGHT definido no main.c
+// ASSINATURA CORRIGIDA: Adicionando ponteiros para vidas e Game Over
+void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int *playerLives, bool *gameOver) {
+    int screenHeight = manager->gameHeight; // Pega a altura do jogo (600)
 
     // 1. Lógica do Timer de Início da Wave
     if (manager->waveStartTimer > 0.0f) {
@@ -294,30 +299,22 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth) {
         // Permite que as partículas continuem se movendo/desvanecendo.
         UpdateParticles(&manager->particleManager, deltaTime);
 
-        // Se o timer ainda estiver rodando, saímos antes de mover os inimigos e verificar conclusão.
         if (manager->waveStartTimer > 0.0f) {
              return;
         }
-
-        // Se o timer acabou (waveStartTimer <= 0.0f), o jogo continua a partir daqui.
     }
 
     // 2. Verificação de Fim de Wave e Transição
-    // Se activeCount == 0 E a lógica do shop não estiver acionada, tentamos avançar.
     if (manager->activeCount == 0 && !manager->triggerShopReturn) {
         CheckWaveCompletion(manager, screenWidth, screenHeight);
     }
 
-    // Se o shop foi acionado, ou se uma nova wave foi iniciada e seu timer está ativo, saímos antes do movimento.
-    // O timerStart > 0.0f já garante o retorno no bloco acima, mas o triggerShopReturn precisa ser verificado.
     if (manager->triggerShopReturn || manager->waveStartTimer > 0.0f) {
-        // Se estiver em transição (Shop ou Novo Wave Timer), apenas atualiza partículas.
         UpdateParticles(&manager->particleManager, deltaTime);
         return;
     }
 
     if (manager->gameOver) {
-        // Se for Game Over, apenas atualiza partículas e retorna
         UpdateParticles(&manager->particleManager, deltaTime);
         return;
     }
@@ -379,7 +376,7 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth) {
     }
 
 
-    // --- Lógica de Descida e Mudança de Direção ---
+    // --- Lógica de Descida e Mudança de Direção (e Perda de Vida) ---
     if (shouldDrop) {
         manager->direction *= -1;
         manager->speed *= 1.02f;
@@ -391,9 +388,24 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth) {
             enemy->position.y += ENEMY_DROP_AMOUNT;
             enemy->rect.y = enemy->position.y - enemy->rect.height / 2.0f;
 
-            // Verificação de Game Over
-            if (enemy->rect.y + enemy->rect.height >= ENEMY_GAME_OVER_Y) {
-                manager->gameOver = true;
+            // LÓGICA CORRIGIDA: Verifica se o inimigo desceu até a linha de Game Over
+            if (enemy->position.y >= ENEMY_GAME_OVER_LINE_Y) {
+
+                // 1. Inimigo alcançou o fim da tela
+                enemy->active = false; // Desativa o inimigo
+                manager->activeCount--; // Decrementa a contagem ativa
+
+                // 2. Decrementa a vida do jogador (se não estiver com vidas negativas/Game Over)
+                if (*playerLives > 0) {
+                    (*playerLives)--;
+                }
+
+                // 3. Checa o Game Over
+                if (*playerLives <= 0) {
+                    *playerLives = 0;
+                    manager->gameOver = true; // Seta o flag no manager
+                    (*gameOver) = true;       // Seta o flag no main.c
+                }
             }
         }
     }
@@ -422,17 +434,12 @@ void DrawEnemies(EnemyManager *manager) {
             DrawEnemy(enemy, texture);
         }
     }
-
-    // 3. REMOVIDO: A lógica de desenho da mensagem de início de wave
-    // foi movida para DrawWaveStartUI no main.c, onde é desenhada sobre
-    // o alvo (800x600) para garantir a escala correta.
 }
 
 void UnloadEnemyManager(EnemyManager *manager) {
     for (int i = 0; i < 3; i++) {
         if (manager->enemyTextures[i].id != 0) UnloadTexture(manager->enemyTextures[i]);
     }
-    // Não precisamos de UnloadParticleManager, pois as partículas são apenas dados em array.
 }
 
 // --- IMPLEMENTAÇÃO DA FUNÇÃO DE COLISÃO (CORRIGIDA) ---
@@ -491,7 +498,6 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
 
                 } else {
                     // Apenas acerto
-                    // O seu audio.h não possui sfxEnemyHit, então vamos usar o som mais fraco (sfxWeak) como feedback
                     PlaySound(audioManager->sfxWeak);
                 }
 

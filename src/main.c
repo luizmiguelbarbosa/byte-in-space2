@@ -7,10 +7,10 @@
 #include "game_state.h"
 #include "shop.h"
 #include "cutscene.h"
-#include "enemy.h" // NOVO: Inclusão do header de inimigos
+#include "enemy.h"
 #include <stdio.h>
-#include <stdbool.h> // Adicionado para usar bool
-#include <math.h>    // Adicionado para usar fmod e sinf
+#include <stdbool.h>
+#include <math.h>
 
 #define GAME_WIDTH 800
 #define GAME_HEIGHT 600
@@ -84,7 +84,6 @@ void DrawShopTransitionUI(EnemyManager *manager) {
 
     DrawText(skipText, optionX2, (int)panel.y + 170, optionFontSize, NEON_MAGENTA);
 }
-// ------------------------------------------------------------------
 
 // --- FUNÇÃO PARA DESENHAR O INÍCIO DA WAVE ---
 void DrawWaveStartUI(EnemyManager *manager) {
@@ -120,9 +119,7 @@ void DrawWaveStartUI(EnemyManager *manager) {
 
     // O contador sempre deve ser amarelo e visível
     DrawText(timerText, (GAME_WIDTH - timerTextWidth) / 2, GAME_HEIGHT / 2 + 20, timerFontSize, Fade(YELLOW, alpha));
-}
-// --------------------------------------------------
-
+} // CHAVE DE FECHAMENTO ADICIONADA AQUI
 
 int main(void) {
     // FULLSCREEN antes da janela
@@ -254,7 +251,8 @@ int main(void) {
                 UpdatePlayerBullets(&bulletManager, dt);
 
                 // 3. Atualização de Inimigos e Timers (Sempre atualiza para gerenciar o spawn e o countdown)
-                UpdateEnemies(&enemyManager, dt, GAME_WIDTH);
+                // CHAMADA CORRIGIDA: Passa os ponteiros para hud.lives e enemyManager.gameOver
+                UpdateEnemies(&enemyManager, dt, GAME_WIDTH, &hud.lives, &enemyManager.gameOver);
 
                 // 4. Lógica de Colisão (só ocorre quando o jogo está ativo, para evitar tiros acidentais)
                 if (!isActionPaused) {
@@ -297,6 +295,15 @@ int main(void) {
 
                 case STATE_GAMEPLAY:
                     DrawStarField(&starField);
+
+                    // NOVO: Desenha a linha verde neon (Limite de Game Over)
+                    const Color NEON_GREEN_LINE = (Color){ 0, 255, 0, 255 };
+                    DrawRectangle(0, (int)ENEMY_GAME_OVER_LINE_Y, GAME_WIDTH, 2, NEON_GREEN_LINE);
+                    // Efeito de Glow (semi-transparente acima e abaixo)
+                    DrawRectangle(0, (int)ENEMY_GAME_OVER_LINE_Y - 2, GAME_WIDTH, 2, Fade(NEON_GREEN_LINE, 0.4f));
+                    DrawRectangle(0, (int)ENEMY_GAME_OVER_LINE_Y + 2, GAME_WIDTH, 2, Fade(NEON_GREEN_LINE, 0.4f));
+
+
                     // NOVO: Desenha os inimigos
                     DrawEnemies(&enemyManager);
                     DrawPlayer(&player);
