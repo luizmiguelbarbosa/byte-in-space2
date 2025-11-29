@@ -4,7 +4,6 @@
 #include "raylib.h"
 #include "audio.h"
 
-// Definições e constantes para inimigos
 #define ENEMY_COLS 11
 #define ENEMY_ROWS 5
 #define ENEMY_COUNT (ENEMY_COLS * ENEMY_ROWS)
@@ -15,10 +14,9 @@
 #define ENEMY_DROP_AMOUNT 20.0f
 #define ENEMY_FLASH_DURATION 0.1f
 #define ENEMY_EXPLOSION_DURATION 0.4f
-#define ENEMY_GAME_OVER_Y 550.0f // Posição Y que define o Game Over (legado, agora usamos a linha)
-#define ENEMY_GAME_OVER_LINE_Y 500.0f // NOVO: Posição Y da linha de Game Over (verde neon)
+#define ENEMY_GAME_OVER_Y 550.0f
+#define ENEMY_GAME_OVER_LINE_Y 500.0f
 
-// Partículas
 #define MAX_PARTICLES 500
 #define PARTICLE_LIFESPAN 0.8f
 
@@ -35,11 +33,10 @@ typedef struct {
     int nextParticleIndex;
 } ParticleManager;
 
-// Estrutura do Inimigo
 typedef struct {
     Vector2 position;
     Rectangle rect;
-    int type; // 1 (fraco), 2 (médio), 3 (líder)
+    int type;
     int health;
     bool active;
     float hitTimer;
@@ -48,47 +45,34 @@ typedef struct {
     float explosionTimer;
 } Enemy;
 
-// Estrutura do Gerenciador de Inimigos
 typedef struct {
     Enemy enemies[ENEMY_COUNT];
     Texture2D enemyTextures[3];
     float speed;
-    int direction; // 1 (direita), -1 (esquerda)
+    int direction;
     int activeCount;
     bool gameOver;
 
-    // Sistema de Waves
     int currentWave;
     float waveStartTimer;
 
-    // NOVO CAMPO
-    int gameHeight; // Altura do jogo (600) para checagem de Game Over
+    int gameHeight;
 
-    // NOVOS CAMPOS PARA O SHOP
-    int wavesCompletedCount;      // Rastreia o total de waves completadas na sessão
-    bool triggerShopReturn;      // Sinaliza para o main.c que é hora de ir para o Shop
-    // FIM NOVOS CAMPOS
+    int wavesCompletedCount;
+    bool triggerShopReturn;
 
     ParticleManager particleManager;
 } EnemyManager;
 
-// Forward declaration para BulletManager.
 typedef struct BulletManager BulletManager;
 
-
-// --- Funções ---
-
-// Gerenciador de Inimigos
 void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight);
-// PROTÓTIPO CORRIGIDO: Adiciona ponteiros para playerLives e gameOver
 void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int *playerLives, bool *gameOver);
 void DrawEnemies(EnemyManager *manager);
 void UnloadEnemyManager(EnemyManager *manager);
 
-// NOVO: Função para verificar o fim da wave e atualizar o contador (Chamada por UpdateEnemies)
 void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeight);
 
-// Lógica de Colisão
 void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager);
 
-#endif // ENEMY_H
+#endif

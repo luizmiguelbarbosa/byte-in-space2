@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <math.h>
 
-// Definições de caminhos relativos
 #define VENDOR_BASE_FRAME_W 64.0f
 #define VENDOR_BASE_FRAME_H 64.0f
 #define VENDOR_DRAW_SCALE 6.0f
@@ -20,21 +19,16 @@
 #define DIALOG_FONT_SIZE 18
 #define DIALOG_TEXT_Y_OFFSET 40
 
-// Define a distância aparente para o portal
 #define PORTAL_Z_DISTANCE 0.5f
-// Usaremos esse valor apenas para posicionar o VISUAL do portal.
 #define PORTAL_BASE_Y_OFFSET 150.0f
 
-// Cores para os brilhos do portal
 #define PORTAL_BRIGHT_CYAN (Color){ 100, 255, 255, 255 }
 #define PORTAL_DARK_BLUE (Color){ 0, 0, 100, 255 }
 
-// Tamanho dos ícones dos power-ups
 const float ITEM_SIZE_SCALED = 60.0f;
 
 
 void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
-    // 1. Inicialização
     shop->vendor.frameRec = (Rectangle){ 0.0f, 0.0f, VENDOR_BASE_FRAME_W, VENDOR_BASE_FRAME_H };
     shop->vendor.scale = VENDOR_DRAW_SCALE;
     shop->vendor.isHappy = false;
@@ -45,9 +39,7 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
     float vendorDrawHeight = shop->vendor.frameRec.height * shop->vendor.scale;
     float horizonY = (float)gameHeight / 2 + HORIZON_OFFSET_Y;
 
-    // MUDANÇA CRUCIAL: A área de colisão (exitArea) é agora uma pequena caixa,
-    // localizada em uma posição específica, bem acima do jogador, mas abaixo do visual.
-    float collisionY = horizonY + 50.0f; // Posição Y da colisão (bem abaixo do horizonte)
+    float collisionY = horizonY + 50.0f;
     float collisionW = 40.0f;
     float collisionH = 20.0f;
 
@@ -58,15 +50,13 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
         collisionH
     };
 
-    // Posiciona o jogador no CHÃO
     float playerH = player->texture.height * player->scale;
     float playerW = player->texture.width * player->scale;
     player->position = (Vector2){
-        (float)gameWidth / 2 - playerW / 2,         // Centro X
-        600.0f - TEXT_BOX_HEIGHT - playerH - 10.0f  // Na parte inferior da tela, bem longe do portal
+        (float)gameWidth / 2 - playerW / 2,
+        600.0f - TEXT_BOX_HEIGHT - playerH - 10.0f
     };
 
-    // 2. Carregamento dos Itens
     shop->itemTextures[0] = LoadTexture(ENERGY_POWERUP_PATH);
     shop->itemTextures[1] = LoadTexture(DOUBLE_SHOT_PATH);
     shop->itemTextures[2] = LoadTexture(SHIELD_PATH);
@@ -80,15 +70,15 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
     float midX = (float)gameWidth / 2;
     float floorY = (float)gameHeight / 2 + 60;
 
-    // Posicionamento dos ITENS CENTRALIZADOS
     float itemSpacing = 20.0f;
     float totalItemsWidth = (ITEM_SIZE_SCALED * MAX_SHOP_ITEMS) + (itemSpacing * (MAX_SHOP_ITEMS - 1));
     float startX = midX - totalItemsWidth / 2;
 
+    // NOVOS PREÇOS AUMENTADOS
     shop->items[0] = (ShopItem){ { startX, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "Carga de Energia", 0, WHITE, true, ITEM_ENERGY_CHARGE };
-    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "TIRO DUPLO", 100, RED, true, ITEM_DOUBLE_SHOT };
-    shop->items[2] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 2, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "ESCUDO", 200, BLUE, true, ITEM_SHIELD };
-    shop->items[3] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 3, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "VIDA EXTRA", 300, GREEN, true, ITEM_EXTRA_LIFE };
+    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "TIRO DUPLO", 750, RED, true, ITEM_DOUBLE_SHOT };
+    shop->items[2] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 2, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "ESCUDO", 1500, BLUE, true, ITEM_SHIELD };
+    shop->items[3] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 3, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "VIDA EXTRA", 2250, GREEN, true, ITEM_EXTRA_LIFE };
 
     shop->particleTimer = 0.0f;
     shop->showParticles = false;
@@ -132,7 +122,6 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
     float pH = player->texture.height * player->scale;
     Rectangle playerRect = { player->position.x, player->position.y, pW, pH };
 
-    // Lógica de Movimento e Saída
     if (!shop->itemBought) {
         float speed = player->speed * deltaTime;
         if (IsKeyDown(KEY_LEFT)) player->position.x -= speed;
@@ -142,15 +131,11 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
 
         player->position.x = Clamp(player->position.x, 0.0f, 800.0f - pW);
 
-        // MUDANÇA CRUCIAL: Limite superior (menor Y) de movimento do jogador.
-        // O jogador só pode subir até o ponto onde começa a área de colisão do portal.
         player->position.y = Clamp(player->position.y, shop->exitArea.y - pH, 600.0f - pH - TEXT_BOX_HEIGHT);
 
-        // Calcular offset do portal para parallax
         float playerRelativeX = (player->position.x - (800.0f / 2.0f)) / (800.0f / 2.0f);
         shop->portalParallaxOffset = playerRelativeX * 50.0f * PORTAL_Z_DISTANCE;
 
-        // ÚNICA LÓGICA DE SAÍDA: Verifica se o jogador colidiu com a área de colisão
         if (CheckCollisionRecs(playerRect, shop->exitArea)) {
             *state = STATE_GAMEPLAY;
             player->position = (Vector2){ 400 - pW/2, 600 - 100 };
@@ -166,7 +151,6 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
         }
     }
 
-    // Gerencia o efeito visual (partículas)
     if (shop->itemBought) {
         shop->showParticles = true;
         shop->particleTimer += deltaTime;
@@ -179,7 +163,6 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
         }
     }
 
-    // Lógica de Compra
     if (!shop->itemBought) {
         bool isPlayerNearItem = false;
 
@@ -245,21 +228,16 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
     DrawStarField(stars);
     DrawShopEnvironment(800, 600);
 
-    // -----------------------------------------------------------------
-    // DESENHO DO PORTAL (Visual - usa o tamanho total)
-    // -----------------------------------------------------------------
-
     float vendorDrawWidth = VENDOR_BASE_FRAME_W * VENDOR_DRAW_SCALE;
     float vendorDrawHeight = VENDOR_BASE_FRAME_H * VENDOR_DRAW_SCALE;
 
-    float portalBaseY = shop->exitArea.y + shop->exitArea.height / 2; // Centraliza a base do visual na colisão
+    float portalBaseY = shop->exitArea.y + shop->exitArea.height / 2;
     float time = GetTime();
     float pulse = sin(time * 4.0f) * 0.1f + 0.9f;
 
-    // Aplicar o offset do parallax ao *visual* do portal
     Rectangle portalVisualRect = {
-        shop->exitArea.x + shop->portalParallaxOffset - (vendorDrawWidth - shop->exitArea.width) / 2, // Ajusta a largura
-        portalBaseY - vendorDrawHeight, // Puxa para cima para desenhar a altura total
+        shop->exitArea.x + shop->portalParallaxOffset - (vendorDrawWidth - shop->exitArea.width) / 2,
+        portalBaseY - vendorDrawHeight,
         vendorDrawWidth,
         vendorDrawHeight
     };
@@ -269,16 +247,14 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
     Color topColor = Fade(SKYBLUE, 0.7f * pulse);
     Color bottomColor = Fade(BLUE, 0.9f * pulse);
 
-    // 1. Efeito de Chão (Fonte de Energia)
     DrawCircleGradient(
         (int)portalDrawCenterX,
-        (int)(portalVisualRect.y + portalVisualRect.height), // Base do visual
+        (int)(portalVisualRect.y + portalVisualRect.height),
         portalVisualRect.width / 2.0f * pulse,
         PORTAL_BRIGHT_CYAN,
         Fade(PORTAL_DARK_BLUE, 0.0f)
     );
 
-    // 2. Desenho do Corpo Principal com Gradiente Vertical
     DrawRectangleGradientV(
         (int)portalVisualRect.x,
         (int)portalVisualRect.y,
@@ -288,10 +264,8 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
         bottomColor
     );
 
-    // 3. Efeito de Contorno Pulsante
     DrawRectangleLinesEx(portalVisualRect, 3.0f, Fade((Color){ 0, 255, 255, 255 }, 0.8f * pulse));
 
-    // 4. Brilhos adicionais ao redor do portal
     for (int i = 0; i < 5; i++) {
         float angle = time * (10 + i * 2) + i * 0.5f;
         float radius = portalVisualRect.width / 2.0f + sin(time * (3 + i)) * 10.0f;
@@ -302,22 +276,13 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
         DrawCircleV((Vector2){ portalDrawCenterX + xOffset, portalVisualRect.y + portalVisualRect.height/2 + yOffset }, 5.0f * pulse, brightPulseColor);
     }
 
-    // 5. Texto do Portal
     DrawText("PORTAL DE SAIDA",
         (int)portalDrawCenterX - MeasureText("PORTAL DE SAIDA", 20)/2,
-        (int)(portalVisualRect.y + portalVisualRect.height) - 30, // Perto da base
+        (int)(portalVisualRect.y + portalVisualRect.height) - 30,
         20,
         Fade(WHITE, 0.9f)
     );
 
-    // [Opcional] Desenhar a caixa de colisão (DESCOMENTE PARA VER A COLISÃO)
-    // DrawRectangleLinesEx(shop->exitArea, 1.0f, RED);
-    // -----------------------------------------------------------------
-    // FIM DO PORTAL
-    // -----------------------------------------------------------------
-
-
-    // Desenho dos Itens
     for (int i = 0; i < MAX_SHOP_ITEMS; i++) {
         bool shouldDrawItem = shop->items[i].active || (shop->items[i].type == ITEM_ENERGY_CHARGE && !player->canCharge);
 
@@ -348,7 +313,6 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
         }
     }
 
-    // EFEITO VISUAL DE PARTÍCULAS
     if (shop->showParticles) {
         float pW = player->texture.width * player->scale;
         float pH = player->texture.height * player->scale;
@@ -361,12 +325,10 @@ void DrawShop(ShopScene *shop, Player *player, StarField *stars) {
         DrawCircleLines((int)playerCenter.x, (int)playerCenter.y, radius, particleColor);
     }
 
-    DrawPlayer(player); // Desenha o jogador
+    DrawPlayer(player);
 
-    // HUD (Créditos)
     DrawText(TextFormat("CREDITOS: $%d", player->gold), 10, 10, 20, GOLD);
 
-    // Caixa de Diálogo
     int boxH = TEXT_BOX_HEIGHT;
     DrawRectangle(0, 600 - boxH, 800, boxH, Fade(BLACK, 0.9f));
     DrawRectangleLines(0, 600 - boxH, 800, boxH, GREEN);

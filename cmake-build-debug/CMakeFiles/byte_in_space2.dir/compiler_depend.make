@@ -131,7 +131,15 @@ CMakeFiles/byte_in_space2.dir/src/main.c.obj: C:/Users/luiz1/byte/src/main.c \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/swprintf.inl \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/vadefs.h \
   C:/Users/luiz1/byte/external/raylib_windows/include/raylib.h \
-  C:/Users/luiz1/byte/include/hud.h
+  C:/Users/luiz1/byte/include/audio.h \
+  C:/Users/luiz1/byte/include/bullet.h \
+  C:/Users/luiz1/byte/include/cutscene.h \
+  C:/Users/luiz1/byte/include/enemy.h \
+  C:/Users/luiz1/byte/include/game_state.h \
+  C:/Users/luiz1/byte/include/hud.h \
+  C:/Users/luiz1/byte/include/player.h \
+  C:/Users/luiz1/byte/include/shop.h \
+  C:/Users/luiz1/byte/include/star.h
 
 CMakeFiles/byte_in_space2.dir/src/map.c.obj: C:/Users/luiz1/byte/src/map.c \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/stdarg.h \
@@ -307,6 +315,8 @@ C:/Users/luiz1/byte/src/game_state.c:
 
 C:/Users/luiz1/byte/src/main.c:
 
+C:/Users/luiz1/byte/include/star.h:
+
 C:/Users/luiz1/byte/src/map.c:
 
 C:/Users/luiz1/byte/include/map.h:
@@ -318,8 +328,6 @@ C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32
 C:/Users/luiz1/byte/src/player.c:
 
 C:/Users/luiz1/byte/src/shop.c:
-
-C:/Users/luiz1/byte/include/star.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/limits.h:
 

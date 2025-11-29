@@ -138,7 +138,15 @@ CMakeFiles/byte_in_space2.dir/src/main.c.obj
  C:/Program Files/JetBrains/CLion 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/swprintf.inl
  C:/Program Files/JetBrains/CLion 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/vadefs.h
  C:/Users/luiz1/byte/external/raylib_windows/include/raylib.h
+ C:/Users/luiz1/byte/include/audio.h
+ C:/Users/luiz1/byte/include/bullet.h
+ C:/Users/luiz1/byte/include/cutscene.h
+ C:/Users/luiz1/byte/include/enemy.h
+ C:/Users/luiz1/byte/include/game_state.h
  C:/Users/luiz1/byte/include/hud.h
+ C:/Users/luiz1/byte/include/player.h
+ C:/Users/luiz1/byte/include/shop.h
+ C:/Users/luiz1/byte/include/star.h
 
 CMakeFiles/byte_in_space2.dir/src/map.c.obj
  C:/Users/luiz1/byte/src/map.c
