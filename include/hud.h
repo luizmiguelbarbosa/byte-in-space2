@@ -12,7 +12,8 @@ typedef struct {
     Texture2D energyIconTexture;
 
     // NOVOS: Texturas dos power-ups
-    Texture2D doubleShotTexture;
+    // Texture2D doubleShotTexture; // ALTERADO
+    Texture2D shurikenTexture;   // NOVO: Shurikens Caninas
     Texture2D shieldTexture;
 } Hud;
 

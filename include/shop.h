@@ -11,7 +11,7 @@
 
 typedef enum {
     ITEM_ENERGY_CHARGE = 0,
-    ITEM_DOUBLE_SHOT,
+    ITEM_SHURIKEN,
     ITEM_SHIELD,
     ITEM_EXTRA_LIFE
 } ItemType;

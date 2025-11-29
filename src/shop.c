@@ -11,7 +11,7 @@
 #define PARTICLE_LIFETIME 0.5f
 
 #define ENERGY_POWERUP_PATH "assets/images/sprites/energy_icon.png"
-#define DOUBLE_SHOT_PATH "assets/images/sprites/tiroduplo.png"
+#define SHURIKEN_PATH "assets/images/sprites/icone_powerup_shurikens.png"
 #define SHIELD_PATH "assets/images/sprites/shield.png"
 #define EXTRA_LIFE_PATH "assets/images/sprites/vidaextra.png"
 
@@ -58,7 +58,7 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
     };
 
     shop->itemTextures[0] = LoadTexture(ENERGY_POWERUP_PATH);
-    shop->itemTextures[1] = LoadTexture(DOUBLE_SHOT_PATH);
+    shop->itemTextures[1] = LoadTexture(SHURIKEN_PATH);
     shop->itemTextures[2] = LoadTexture(SHIELD_PATH);
     shop->itemTextures[3] = LoadTexture(EXTRA_LIFE_PATH);
 
@@ -76,7 +76,7 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
 
     // NOVOS PREÇOS AUMENTADOS
     shop->items[0] = (ShopItem){ { startX, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "Carga de Energia", 0, WHITE, true, ITEM_ENERGY_CHARGE };
-    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "TIRO DUPLO", 750, RED, true, ITEM_DOUBLE_SHOT };
+    shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "SHURIKENS CANINAS", 750, RED, true, ITEM_SHURIKEN };
     shop->items[2] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 2, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "ESCUDO", 1500, BLUE, true, ITEM_SHIELD };
     shop->items[3] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 3, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "VIDA EXTRA", 2250, GREEN, true, ITEM_EXTRA_LIFE };
 
@@ -195,7 +195,7 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
                             if (player->gold >= shop->items[i].price) {
 
                                 switch (shop->items[i].type) {
-                                    case ITEM_DOUBLE_SHOT: player->hasDoubleShot = true; break;
+                                    case ITEM_SHURIKEN: player->hasDoubleShot = true; break;
                                     case ITEM_SHIELD: player->hasShield = true; break;
                                     case ITEM_EXTRA_LIFE: player->extraLives++; break;
                                     default: break;

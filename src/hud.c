@@ -5,10 +5,11 @@
 
 // --- DEFINIÇÕES DE CAMINHOS ---
 #define LIFE_ICON_PATH "assets/images/sprites/life_icon_large.png"
-#define ENERGY_ICON_PATH "assets/images/sprites/energy_icon.png" 
+#define ENERGY_ICON_PATH "assets/images/sprites/energy_icon.png"
 
 // --- PATHS DOS POWER-UPS ---
-#define DOUBLE_SHOT_PATH "assets/images/sprites/tiroduplo.png"
+// #define DOUBLE_SHOT_PATH "assets/images/sprites/tiroduplo.png" // REMOVIDO
+#define SHURIKEN_PATH "assets/images/sprites/icone_powerup_shurikens.png" // NOVO: Shurikens
 #define SHIELD_PATH "assets/images/sprites/shield.png"
 // O ícone de vida extra é o mesmo do ícone de vida
 
@@ -30,9 +31,10 @@ void InitHud(Hud *hud) {
     else printf("[ERRO] Icone de Energia nao encontrado: %s\n", ENERGY_ICON_PATH);
 
     // Carrega Texturas dos Power-ups
-    hud->doubleShotTexture = LoadTexture(DOUBLE_SHOT_PATH);
-    if (hud->doubleShotTexture.id != 0) SetTextureFilter(hud->doubleShotTexture, TEXTURE_FILTER_POINT);
-    else printf("[ERRO] Icone de Tiro Duplo nao encontrado: %s\n", DOUBLE_SHOT_PATH);
+    // MUDANÇA: Carregando Shurikens
+    hud->shurikenTexture = LoadTexture(SHURIKEN_PATH);
+    if (hud->shurikenTexture.id != 0) SetTextureFilter(hud->shurikenTexture, TEXTURE_FILTER_POINT);
+    else printf("[ERRO] Icone de Shurikens nao encontrado: %s\n", SHURIKEN_PATH);
 
     hud->shieldTexture = LoadTexture(SHIELD_PATH);
     if (hud->shieldTexture.id != 0) SetTextureFilter(hud->shieldTexture, TEXTURE_FILTER_POINT);
@@ -106,12 +108,12 @@ void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bo
         // 3. POWER-UPS ATIVOS (SOLICITAÇÃO 3: HUD)
         // (O ícone de Carga de Energia já foi desenhado acima)
 
-        // TIRO DUPLO
-        if (hasDoubleShot) {
-            if (hud->doubleShotTexture.id != 0) {
-                Rectangle source = { 0.0f, 0.0f, (float)hud->doubleShotTexture.width, (float)hud->doubleShotTexture.height };
+        // SHURIKENS (Substituindo TIRO DUPLO)
+        if (hasDoubleShot) { // Mantém a flag hasDoubleShot, que agora representa as Shurikens
+            if (hud->shurikenTexture.id != 0) {
+                Rectangle source = { 0.0f, 0.0f, (float)hud->shurikenTexture.width, (float)hud->shurikenTexture.height };
                 Rectangle dest = { (float)iconX, currentY, iconDrawWidth, iconDrawHeight };
-                DrawTexturePro(hud->doubleShotTexture, source, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+                DrawTexturePro(hud->shurikenTexture, source, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
                 currentY += iconDrawHeight + 10.0f;
             }
         }
@@ -140,7 +142,7 @@ void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bo
 void UnloadHud(Hud *hud) {
     if (hud->lifeIconTexture.id != 0) UnloadTexture(hud->lifeIconTexture);
     if (hud->energyIconTexture.id != 0) UnloadTexture(hud->energyIconTexture);
-    if (hud->doubleShotTexture.id != 0) UnloadTexture(hud->doubleShotTexture);
+    // MUDANÇA: Descarregando Shurikens
+    if (hud->shurikenTexture.id != 0) UnloadTexture(hud->shurikenTexture);
     if (hud->shieldTexture.id != 0) UnloadTexture(hud->shieldTexture);
-
 }
