@@ -74,7 +74,6 @@ void InitShop(ShopScene *shop, Player *player, int gameWidth, int gameHeight) {
     float totalItemsWidth = (ITEM_SIZE_SCALED * MAX_SHOP_ITEMS) + (itemSpacing * (MAX_SHOP_ITEMS - 1));
     float startX = midX - totalItemsWidth / 2;
 
-    // NOVOS PREÇOS AUMENTADOS
     shop->items[0] = (ShopItem){ { startX, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "Carga de Energia", 0, WHITE, true, ITEM_ENERGY_CHARGE };
     shop->items[1] = (ShopItem){ { startX + ITEM_SIZE_SCALED + itemSpacing, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "SHURIKENS", 750, RED, true, ITEM_SHURIKEN };
     shop->items[2] = (ShopItem){ { startX + (ITEM_SIZE_SCALED + itemSpacing) * 2, floorY, ITEM_SIZE_SCALED, ITEM_SIZE_SCALED }, "ESCUDO", 1500, BLUE, true, ITEM_SHIELD };
@@ -195,9 +194,24 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
                             if (player->gold >= shop->items[i].price) {
 
                                 switch (shop->items[i].type) {
-                                    case ITEM_SHURIKEN: player->hasDoubleShot = true; break;
-                                    case ITEM_SHIELD: player->hasShield = true; break;
-                                    case ITEM_EXTRA_LIFE: player->extraLives++; break;
+                                    case ITEM_SHURIKEN:
+                                        player->hasDoubleShot = true;
+                                        if (player->shurikenTexture.id != 0) {
+                                            player->texture = player->shurikenTexture;
+                                        }
+                                        break;
+                                    case ITEM_SHIELD:
+                                        player->hasShield = true;
+                                        if (player->shieldTextureAppearance.id != 0) {
+                                            player->texture = player->shieldTextureAppearance;
+                                        }
+                                        break;
+                                    case ITEM_EXTRA_LIFE:
+                                        player->extraLives++;
+                                        if (player->extraLifeTextureAppearance.id != 0) {
+                                            player->texture = player->extraLifeTextureAppearance;
+                                        }
+                                        break;
                                     default: break;
                                 }
 

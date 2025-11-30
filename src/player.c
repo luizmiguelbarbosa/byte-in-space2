@@ -2,11 +2,11 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "audio.h"
-#include "bullet.h" // Necessário para ShootChargedAttack
+#include "bullet.h"
 #include <stdio.h>
 
 #define PLAYER_MOVE_SPEED 400.0f
-#define BLACK_AREA_START_Y 480.0f // Limite inferior para gameplay
+#define BLACK_AREA_START_Y 480.0f
 
 #define CHARGE_RATE 14.286f
 #define MAX_CHARGE 100.0f
@@ -17,6 +17,11 @@
 #define AURA_MAX_ALPHA 0.8f
 #define AURA_PULSE_SPEED 5.0f
 #define FIRE_AURA_RADIUS_INCREASE 1.1f
+
+#define BASE_SPRITE_PATH "assets/images/sprites/byte_1.png"
+#define SHURIKEN_SPRITE_PATH "assets/images/sprites/byte_2.png"
+#define SHIELD_SPRITE_PATH "assets/images/sprites/byte_shield.png"
+#define EXTRA_LIFE_SPRITE_PATH "assets/images/sprites/byte_4.png"
 
 #define COLOR_WEAK (CLITERAL(Color){ 0, 191, 255, 255 })
 #define COLOR_MEDIUM (CLITERAL(Color){ 128, 0, 255, 255 })
@@ -35,16 +40,25 @@ int CalculateAttackType(float charge) {
 }
 
 void InitPlayer(Player *player) {
-    const char* spritePath = "assets/images/sprites/byte_1.png";
+    player->baseTexture = LoadTexture(BASE_SPRITE_PATH);
+    player->shurikenTexture = LoadTexture(SHURIKEN_SPRITE_PATH);
+    player->shieldTextureAppearance = LoadTexture(SHIELD_SPRITE_PATH);
+    player->extraLifeTextureAppearance = LoadTexture(EXTRA_LIFE_SPRITE_PATH);
 
-    player->texture = LoadTexture(spritePath);
+    player->texture = player->baseTexture;
+
     player->scale = PLAYER_SCALE;
     player->speed = PLAYER_MOVE_SPEED;
 
-    player->gold = 0; // INICIALIZA DINHEIRO
+    player->gold = 0;
 
     player->energyCharge = 0.0f;
     player->isCharging = false;
+    player->canCharge = false;
+
+    player->hasDoubleShot = false;
+    player->hasShield = false;
+    player->extraLives = 0;
 
     float player_width_scaled = player->texture.width * player->scale;
     float player_height_scaled = (float)player->texture.height * player->scale;
@@ -53,19 +67,23 @@ void InitPlayer(Player *player) {
         (float)GetScreenWidth()/2 - player_width_scaled/2,
         (float)GetScreenHeight() - player_height_scaled - 10.0f
     };
-    SetTextureFilter(player->texture, TEXTURE_FILTER_POINT);
+
+    if (player->baseTexture.id != 0) SetTextureFilter(player->baseTexture, TEXTURE_FILTER_POINT);
+    if (player->shurikenTexture.id != 0) SetTextureFilter(player->shurikenTexture, TEXTURE_FILTER_POINT);
+    if (player->shieldTextureAppearance.id != 0) SetTextureFilter(player->shieldTextureAppearance, TEXTURE_FILTER_POINT);
+    if (player->extraLifeTextureAppearance.id != 0) SetTextureFilter(player->extraLifeTextureAppearance, TEXTURE_FILTER_POINT);
+
+    player->texture = player->baseTexture;
 
     player->auraRadius = player_width_scaled * 0.5f;
     player->auraAlpha = 0.0f;
     player->auraPulseSpeed = AURA_PULSE_SPEED;
+
 }
 
 void UpdatePlayer(Player *player, BulletManager *bulletManager, AudioManager *audioManager, Hud *hud, float deltaTime, int screenWidth, int screenHeight) {
-    // NOTA: O movimento na loja é tratado em 'shop.c'
-
     float move_dist = player->speed * deltaTime;
 
-    // --- Movimento ---
     if (IsKeyDown(KEY_LEFT)) player->position.x -= move_dist;
     if (IsKeyDown(KEY_RIGHT)) player->position.x += move_dist;
     if (IsKeyDown(KEY_UP)) player->position.y -= move_dist;
@@ -78,8 +96,7 @@ void UpdatePlayer(Player *player, BulletManager *bulletManager, AudioManager *au
         player->position.y + ship_height / 2
     };
 
-    // --- LÓGICA DE CARREGAMENTO E DISPARO ---
-    if (audioManager != NULL && bulletManager != NULL) { // Só permite atirar/carregar no modo GAMEPLAY
+    if (audioManager != NULL && bulletManager != NULL) {
         if (IsKeyDown(KEY_SPACE)) {
             player->isCharging = true;
             player->energyCharge = Clamp(player->energyCharge + CHARGE_RATE * deltaTime, 0.0f, MAX_CHARGE);
@@ -88,7 +105,6 @@ void UpdatePlayer(Player *player, BulletManager *bulletManager, AudioManager *au
                 PlaySound(audioManager->sfxCharge);
             }
 
-            // Lógica da Aura (Carregando)
             float baseRadius = ship_width / 2.0f;
             float maxIncrease = (ship_width * AURA_MAX_RADIUS_FACTOR) - baseRadius;
             player->auraRadius = baseRadius + (maxIncrease * (player->energyCharge / MAX_CHARGE));
@@ -101,7 +117,9 @@ void UpdatePlayer(Player *player, BulletManager *bulletManager, AudioManager *au
 
             int attackType = CalculateAttackType(player->energyCharge);
 
-            ShootChargedAttack(bulletManager, playerCenter, ship_height, attackType);
+            // Chamada atualizada para incluir o status do power-up
+            ShootChargedAttack(bulletManager, playerCenter, ship_height, attackType, player->hasDoubleShot);
+
             PlayAttackSfx(audioManager, attackType);
 
             player->energyCharge = 0.0f;
@@ -114,10 +132,7 @@ void UpdatePlayer(Player *player, BulletManager *bulletManager, AudioManager *au
         }
     }
 
-
-    // --- Limites da tela (APENAS GAMEPLAY) ---
     player->position.x = Clamp(player->position.x, 0.0f, (float)screenWidth - ship_width);
-    // Limite da gameplay para o eixo Y: não permite ir para a área de HUD
     player->position.y = Clamp(player->position.y, BLACK_AREA_START_Y, (float)screenHeight - ship_height);
 }
 
@@ -131,13 +146,9 @@ void DrawPlayer(Player *player) {
         player->position.y + ship_height / 2
     };
 
-    // -------------------------------------------
-    // Desenho do FOGO PROCEDURAL (Motores)
-    // -------------------------------------------
     float firePulse = (sin(GetTime() * 20.0f) * 0.1f + 0.9f);
     float fireRadius = ship_width * 0.08f / player->scale * firePulse;
 
-    // Posição: Um pouco abaixo do centro da base da nave
     Vector2 firePos = { playerCenter.x, player->position.y + ship_height - (ship_height / 10.0f) };
 
     DrawCircleGradient(
@@ -148,10 +159,7 @@ void DrawPlayer(Player *player) {
         (int)firePos.x, (int)firePos.y, fireRadius,
         Fade(YELLOW, 0.9f), Fade(RED, 0.0f)
     );
-    // -------------------------------------------
 
-
-    // --- Desenha a Aura SOMENTE se estiver carregando ---
     if (player->isCharging) {
         Color baseColor;
         bool isMaxCharge = (player->energyCharge >= MAX_CHARGE);
@@ -195,10 +203,12 @@ void DrawPlayer(Player *player) {
         );
     }
 
-    // Desenha o player por cima de tudo
     DrawTextureEx(player->texture, player->position, 0.0f, player->scale, WHITE);
 }
 
 void UnloadPlayer(Player *player) {
-    UnloadTexture(player->texture);
+    if (player->baseTexture.id != 0) UnloadTexture(player->baseTexture);
+    if (player->shurikenTexture.id != 0) UnloadTexture(player->shurikenTexture);
+    if (player->shieldTextureAppearance.id != 0) UnloadTexture(player->shieldTextureAppearance);
+    if (player->extraLifeTextureAppearance.id != 0) UnloadTexture(player->extraLifeTextureAppearance);
 }

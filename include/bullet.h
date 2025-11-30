@@ -9,6 +9,7 @@
 #define ATTACK_WEAK 1
 #define ATTACK_MEDIUM 2
 #define ATTACK_STRONG 3
+#define ATTACK_SHURIKEN 4
 
 typedef struct {
     Rectangle rect;
@@ -18,17 +19,16 @@ typedef struct {
     int type;
 } Bullet;
 
-// CORREÇÃO: O struct agora é nomeado (struct BulletManager)
-// Isso resolve o conflito de tipos com a declaração em enemy.h e o erro de "storage size" em main.c.
 typedef struct BulletManager {
     Bullet bullets[MAX_PLAYER_BULLETS];
     Texture2D weakTexture;
     Texture2D mediumTexture;
     Texture2D strongTexture;
+    Texture2D shurikenTexture;
 } BulletManager;
 
 void InitBulletManager(BulletManager *manager);
-void ShootChargedAttack(BulletManager *manager, Vector2 playerCenter, float playerHeight, int attackType);
+void ShootChargedAttack(BulletManager *manager, Vector2 playerCenter, float playerHeight, int attackType, bool hasShurikens);
 void UpdatePlayerBullets(BulletManager *manager, float deltaTime);
 void DrawPlayerBullets(BulletManager *manager);
 void UnloadBulletManager(BulletManager *manager);

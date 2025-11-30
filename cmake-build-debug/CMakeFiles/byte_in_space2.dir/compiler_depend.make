@@ -30,6 +30,8 @@ CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: C:/Users/luiz1/byte/src/bullet.c
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/_mingw_stdarg.h \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/corecrt.h \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/corecrt_stdio_config.h \
+  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/crtdefs.h \
+  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/math.h \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/sdks/_mingw_ddk.h \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/stdio_s.h \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/stdarg.h \
@@ -37,6 +39,7 @@ CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: C:/Users/luiz1/byte/src/bullet.c
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/swprintf.inl \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/vadefs.h \
   C:/Users/luiz1/byte/external/raylib_windows/include/raylib.h \
+  C:/Users/luiz1/byte/external/raylib_windows/include/raymath.h \
   C:/Users/luiz1/byte/include/bullet.h
 
 CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: C:/Users/luiz1/byte/src/cutscene.c \
@@ -201,6 +204,7 @@ CMakeFiles/byte_in_space2.dir/src/shop.c.obj: C:/Users/luiz1/byte/src/shop.c \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/swprintf.inl \
   C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/vadefs.h \
   C:/Users/luiz1/byte/external/raylib_windows/include/raylib.h \
+  C:/Users/luiz1/byte/include/audio.h \
   C:/Users/luiz1/byte/include/bullet.h \
   C:/Users/luiz1/byte/include/game_state.h \
   C:/Users/luiz1/byte/include/hud.h \
@@ -289,14 +293,6 @@ C:/Users/luiz1/byte/external/raylib_windows/include/raylib.h:
 
 C:/Users/luiz1/byte/src/bullet.c:
 
-C:/Users/luiz1/byte/include/game_state.h:
-
-C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/string.h:
-
-C:/Users/luiz1/byte/include/bullet.h:
-
-C:/Users/luiz1/byte/src/cutscene.c:
-
 C:/Users/luiz1/byte/external/raylib_windows/include/raymath.h:
 
 C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/crtdefs.h:
@@ -304,6 +300,14 @@ C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include
 C:/Users/luiz1/byte/src/star.c:
 
 C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/math.h:
+
+C:/Users/luiz1/byte/include/game_state.h:
+
+C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/string.h:
+
+C:/Users/luiz1/byte/include/bullet.h:
+
+C:/Users/luiz1/byte/src/cutscene.c:
 
 C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/string_s.h:
 

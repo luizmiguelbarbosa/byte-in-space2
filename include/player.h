@@ -5,7 +5,6 @@
 #include "bullet.h"
 #include "hud.h"
 
-// --- DECLARAÇÃO FORWARD para AudioManager ---
 typedef struct AudioManager AudioManager;
 
 #define PLAYER_SCALE 0.2f
@@ -15,22 +14,24 @@ typedef struct AudioManager AudioManager;
 
 typedef struct {
     Texture2D texture;
+    Texture2D baseTexture;
+    Texture2D shurikenTexture;
+    Texture2D shieldTextureAppearance; // NOVA
+    Texture2D extraLifeTextureAppearance; // NOVA
     Vector2 position;
     float speed;
     float scale;
 
-    int gold; // DINHEIRO DO JOGADOR
+    int gold;
 
     float energyCharge;
     bool isCharging;
-    bool canCharge; // NOVO: Habilita o tiro carregado (o power-up FREE)
+    bool canCharge;
 
-    // NOVOS: Power-ups comprados
     bool hasDoubleShot;
     bool hasShield;
     int extraLives;
 
-    // --- Propriedades da Aura ---
     float auraRadius;
     float auraAlpha;
     float auraPulseSpeed;
@@ -38,7 +39,6 @@ typedef struct {
 } Player;
 
 void InitPlayer(Player *player);
-// Nota: Passamos menos argumentos para UpdatePlayer na STATE_SHOP
 void UpdatePlayer(Player *player, BulletManager *bulletManager, AudioManager *audioManager, Hud *hud, float deltaTime, int screenWidth, int screenHeight);
 void DrawPlayer(Player *player);
 void UnloadPlayer(Player *player);
