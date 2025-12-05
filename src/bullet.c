@@ -62,21 +62,27 @@ void ShootChargedAttack(BulletManager *manager, Vector2 playerCenter, float play
     float mainSpeed = 0.0f;
     float mainScale = 0.0f;
 
+    // Variável de controle: desativa shurikens para tipos 2 e 3
+    bool shouldFireShurikens = hasShurikens;
+
     switch (attackType) {
         case ATTACK_STRONG:
             mainTexture = manager->strongTexture;
             mainSpeed = 700.0f;
             mainScale = BULLET_SCALE_STRONG;
+            shouldFireShurikens = false; // 🛑 Desativa shurikens para ataque FORTE
             break;
         case ATTACK_MEDIUM:
             mainTexture = manager->mediumTexture;
             mainSpeed = 600.0f;
             mainScale = BULLET_SCALE_MEDIUM;
+            shouldFireShurikens = false; // 🛑 Desativa shurikens para ataque MÉDIO
             break;
         case ATTACK_WEAK: default:
             mainTexture = manager->weakTexture;
             mainSpeed = 500.0f;
             mainScale = BULLET_SCALE_WEAK;
+            // Se for ATTACK_WEAK, shouldFireShurikens usa o valor original (hasShurikens)
             break;
     }
 
@@ -84,7 +90,7 @@ void ShootChargedAttack(BulletManager *manager, Vector2 playerCenter, float play
     Vector2 mainSpeedVec = { 0, -mainSpeed };
     FireBullet(manager, mainPosition, mainSpeedVec, mainScale, attackType, mainTexture);
 
-    if (hasShurikens) {
+    if (shouldFireShurikens) {
         float shurikenSpeed = SHURIKEN_BASE_SPEED;
 
         Vector2 startPosition = { playerCenter.x, playerCenter.y - (playerHeight / 2) };

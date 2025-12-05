@@ -20,6 +20,41 @@
 #define ENEMY_INITIAL_HEALTH_T2 2
 #define ENEMY_INITIAL_HEALTH_T3 4
 
+// Array de caminhos para os frames do Boss (corrigido para caminhos relativos)
+static const char *bossFramePaths[BOSS_FRAME_COUNT] = {
+    "assets/images/sprites/frame_04_delay-0.08s.gif",
+    "assets/images/sprites/frame_05_delay-0.08s.gif",
+    "assets/images/sprites/frame_06_delay-0.08s.gif",
+    "assets/images/sprites/frame_07_delay-008s.gif",
+    "assets/images/sprites/frame_08_delay-0.08s.gif",
+    "assets/images/sprites/frame_09_delay-0.08s.gif",
+    "assets/images/sprites/frame_10_delay-0.08s.gif",
+    "assets/images/sprites/frame_11_delay-0.08s.gif",
+    "assets/images/sprites/frame_12_delay-0.08s.gif",
+    "assets/images/sprites/frame_13_delay-0.08s.gif",
+    "assets/images/sprites/frame_14_delay-0.08s.gif",
+    "assets/images/sprites/frame_15_delay-0.08s.gif",
+    "assets/images/sprites/frame_16_delay-0.08s.gif",
+    "assets/images/sprites/frame_17_delay-0.08s.gif",
+    "assets/images/sprites/frame_18_delay-0.08s.gif",
+    "assets/images/sprites/frame_19_delay-0.08s.gif",
+    "assets/images/sprites/frame_20_delay-0.08s.gif",
+    "assets/images/sprites/frame_21_delay-0.08s.gif",
+    "assets/images/sprites/frame_22_delay-0.08s.gif",
+    "assets/images/sprites/frame_23_delay-0.08s.gif",
+    "assets/images/sprites/frame_24_delay-0.08s.gif",
+    "assets/images/sprites/frame_25_delay-0.08s.gif",
+    "assets/images/sprites/frame_26_delay-0.08s.gif",
+    "assets/images/sprites/frame_27_delay-0.08s.gif",
+    "assets/images/sprites/frame_28_delay-0.08s.gif",
+    "assets/images/sprites/frame_00_delay-0.08s.gif",
+    "assets/images/sprites/frame_01_delay-0.08s.gif",
+    "assets/images/sprites/frame_02_delay-0.08s.gif",
+    "assets/images/sprites/frame_03_delay-0.08s.gif",
+};
+
+// --- Funções de Partículas (Mantidas) ---
+
 void InitParticleManager(ParticleManager *manager) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
         manager->particles[i].active = false;
@@ -103,6 +138,8 @@ void DrawParticles(ParticleManager *manager) {
     }
 }
 
+// --- Funções de Inimigo Normal (Mantidas) ---
+
 void DrawEnemy(Enemy *enemy, Texture2D texture) {
     if (!enemy->active) return;
 
@@ -163,18 +200,168 @@ void DrawExplosion(Enemy *enemy) {
     );
 }
 
-void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight, int waveNumber) {
-    float speedMultiplier = 1.0f + (waveNumber - 1) * 0.15f;
-    manager->speed = ENEMY_SPEED_INITIAL * speedMultiplier;
+// --- Funções do Boss (Mantidas) ---
 
+void InitBoss(Boss *boss, int screenWidth, int screenHeight) {
+    boss->active = true;
+    boss->health = BOSS_INITIAL_HEALTH;
+    boss->maxHealth = BOSS_INITIAL_HEALTH;
+    boss->hitTimer = 0.0f;
+
+    // Posição inicial (centro superior)
+    boss->position.x = (float)screenWidth / 2.0f;
+    boss->position.y = 100.0f;
+
+    // Colisão
+    boss->rect.width = BOSS_SIZE_WIDTH;
+    boss->rect.height = BOSS_SIZE_HEIGHT;
+    boss->rect.x = boss->position.x - BOSS_SIZE_WIDTH / 2.0f;
+    boss->rect.y = boss->position.y - BOSS_SIZE_HEIGHT / 2.0f;
+
+    // Animação
+    boss->currentFrame = 0;
+    boss->frameTimer = BOSS_ANIMATION_SPEED;
+
+    // Movimento inicial (Ex: centro-direita)
+    boss->movementTimer = 0.0f;
+    boss->targetPosition.x = (float)screenWidth * 0.75f;
+    boss->targetPosition.y = 100.0f;
+}
+
+void UpdateBoss(Boss *boss, float deltaTime, int screenWidth) {
+    if (!boss->active) return;
+
+    // 1. Lógica de Animação
+    boss->frameTimer -= deltaTime;
+    if (boss->frameTimer <= 0.0f) {
+        boss->currentFrame = (boss->currentFrame + 1) % BOSS_FRAME_COUNT;
+        boss->frameTimer = BOSS_ANIMATION_SPEED;
+    }
+
+    // 2. Lógica de Hit
+    if (boss->hitTimer > 0.0f) {
+        boss->hitTimer -= deltaTime;
+    }
+
+    // 3. Lógica de Movimento (Movimento pendular simples)
+    float speed = 150.0f;
+    Vector2 direction = Vector2Subtract(boss->targetPosition, boss->position);
+    float distance = Vector2Length(direction);
+
+    if (distance > 5.0f) {
+        Vector2 normalizedDirection = Vector2Normalize(direction);
+        boss->position.x += normalizedDirection.x * speed * deltaTime;
+        boss->position.y += normalizedDirection.y * speed * deltaTime;
+
+    } else {
+        // Chegou ao alvo, define um novo alvo
+        float currentX = boss->position.x;
+        if (currentX < screenWidth / 2.0f) {
+            // Mudar para o lado direito
+            boss->targetPosition.x = (float)screenWidth * 0.75f;
+        } else {
+            // Mudar para o lado esquerdo
+            boss->targetPosition.x = (float)screenWidth * 0.25f;
+        }
+    }
+
+    // Atualiza o retângulo de colisão
+    boss->rect.x = boss->position.x - boss->rect.width / 2.0f;
+    boss->rect.y = boss->position.y - boss->rect.height / 2.0f;
+}
+
+void DrawBoss(Boss *boss, Texture2D frames[]) {
+    if (!boss->active) return;
+
+    Texture2D currentTexture = frames[boss->currentFrame];
+
+    float w = BOSS_SIZE_WIDTH;
+    float h = BOSS_SIZE_HEIGHT;
+
+    // DestRec para centralizar no ponto boss->position
+    Rectangle destRec = { boss->position.x, boss->position.y, w, h };
+    Vector2 origin = { w / 2.0f, h / 2.0f };
+
+    Color tintColor = WHITE;
+    if (boss->hitTimer > 0.0f) {
+        tintColor = RED;
+    }
+
+    DrawTexturePro(
+        currentTexture,
+        (Rectangle){ 0.0f, 0.0f, (float)currentTexture.width, (float)currentTexture.height },
+        destRec,
+        origin,
+        0.0f,
+        tintColor
+    );
+
+    // Desenhar barra de vida do Boss
+    float barWidth = w * 1.5f;
+    float barHeight = 10.0f;
+    float healthRatio = (float)boss->health / (float)boss->maxHealth;
+
+    Rectangle healthBarBg = {
+        boss->position.x - barWidth / 2.0f,
+        boss->position.y - h / 2.0f - barHeight - 10.0f,
+        barWidth,
+        barHeight
+    };
+
+    DrawRectangleRec(healthBarBg, GRAY);
+    DrawRectangle(
+        (int)healthBarBg.x,
+        (int)healthBarBg.y,
+        (int)(barWidth * healthRatio),
+        (int)barHeight,
+        LIME
+    );
+}
+
+// --- Lógica de Inicialização da Onda Corrigida ---
+
+void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight, int waveNumber) {
+
+    // 1. Configurações do Boss
+    if (waveNumber >= 10 && !manager->bossActive) {
+        manager->bossActive = true;
+        InitBoss(&manager->boss, screenWidth, screenHeight);
+    } else if (waveNumber < 10) {
+        manager->bossActive = false;
+        manager->boss.active = false;
+    }
+
+    // 2. Configurações de Inimigos Normais
+
+    float speedMultiplier = 1.0f + (waveNumber - 1) * 0.15f;
     int healthBoost = (waveNumber - 1) / 3;
+    float startY = 20.0f;
+    int enemiesToActivate = ENEMY_COUNT;
+    int offsetRows = 0;
+
+    if (waveNumber >= 10) {
+        // Reduz a velocidade lateral na fase do boss e usa a dificuldade da wave 9
+        speedMultiplier = 1.0f + (9 - 1) * 0.15f;
+        manager->speed = ENEMY_SPEED_INITIAL * speedMultiplier * 0.5f;
+
+        healthBoost = (9 - 1) / 3;
+
+        // Inicia mais para baixo para evitar o Boss
+        startY = 200.0f;
+
+        // REMOVER PRIMEIRA LINHA (Linha 0)
+        enemiesToActivate = ENEMY_COUNT - ENEMY_COLS;
+        offsetRows = 1;
+    } else {
+        // Waves normais (antes da 10)
+        manager->speed = ENEMY_SPEED_INITIAL * speedMultiplier;
+    }
 
     float totalWidth = ENEMY_COLS * ENEMY_SIZE + (ENEMY_COLS - 1) * ENEMY_PADDING_X;
     float startX = (screenWidth - totalWidth) / 2.0f;
-    float startY = 20.0f;
 
     manager->direction = 1;
-    manager->activeCount = ENEMY_COUNT;
+    manager->activeCount = enemiesToActivate;
     manager->gameOver = false;
     manager->gameHeight = screenHeight;
 
@@ -186,8 +373,22 @@ void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight
         int row = i / ENEMY_COLS;
         int col = i % ENEMY_COLS;
 
+        // Lógica para desativar a primeira linha na wave do Boss
+        if (waveNumber >= 10 && row == 0) {
+            enemy->active = false;
+            enemy->health = 0;
+            continue;
+        }
+
+        // Se o Boss estiver ativo, ajustamos a linha inicial
+        int effectiveRow = row - offsetRows;
+        if (effectiveRow < 0) effectiveRow = 0;
+
+        // Posição y ajustada: a primeira linha visível usa startY
+        float currentY = startY + effectiveRow * (ENEMY_SIZE + ENEMY_PADDING_Y) + ENEMY_SIZE / 2.0f;
+
         enemy->position.x = startX + col * (ENEMY_SIZE + ENEMY_PADDING_X) + ENEMY_SIZE / 2.0f;
-        enemy->position.y = startY + row * (ENEMY_SIZE + ENEMY_PADDING_Y) + ENEMY_SIZE / 2.0f;
+        enemy->position.y = currentY;
 
         enemy->rect.width = COLLISION_DIMENSION;
         enemy->rect.height = COLLISION_DIMENSION;
@@ -199,6 +400,7 @@ void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight
         enemy->isExploding = false;
         enemy->explosionTimer = 0.0f;
 
+        // Definição de tipo/saúde (usa a linha original para definir o tipo)
         if (row == 0) {
             enemy->neonColor = COLOR_NEON_RED;
             enemy->type = 3;
@@ -220,6 +422,11 @@ void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight) 
     manager->enemyTextures[1] = LoadTexture("assets/images/sprites/inimigo_2.png");
     manager->enemyTextures[2] = LoadTexture("assets/images/sprites/inimigo_3.png");
 
+    // Carregamento dos Frames do Boss
+    for (int i = 0; i < BOSS_FRAME_COUNT; i++) {
+        manager->bossFrames[i] = LoadTexture(bossFramePaths[i]);
+    }
+
     manager->currentWave = 1;
     manager->waveStartTimer = WAVE_START_DURATION;
     manager->gameHeight = screenHeight;
@@ -227,16 +434,17 @@ void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight) 
     manager->wavesCompletedCount = 0;
     manager->triggerShopReturn = false;
 
+    manager->bossActive = false;
+
     InitParticleManager(&manager->particleManager);
 
     InitEnemiesForWave(manager, screenWidth, screenHeight, manager->currentWave);
 }
 
 void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeight) {
-    if (manager->activeCount == 0) {
-
+    // A onda termina se o Boss for derrotado E/OU se os inimigos normais acabarem.
+    if (!manager->bossActive && manager->activeCount == 0) {
         manager->wavesCompletedCount++;
-
         if (manager->wavesCompletedCount % 3 == 0) {
             manager->triggerShopReturn = true;
         } else {
@@ -258,7 +466,7 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int 
         }
     }
 
-    if (manager->activeCount == 0 && !manager->triggerShopReturn) {
+    if (!manager->triggerShopReturn) {
         CheckWaveCompletion(manager, screenWidth, screenHeight);
     }
 
@@ -274,6 +482,12 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int 
 
     UpdateParticles(&manager->particleManager, deltaTime);
 
+    // --- Lógica de Atualização do Boss ---
+    if (manager->bossActive) {
+        UpdateBoss(&manager->boss, deltaTime, screenWidth);
+    }
+
+    // --- Lógica de Atualização dos Inimigos Normais ---
     float moveAmount = manager->speed * manager->direction * deltaTime;
     bool shouldDrop = false;
 
@@ -356,6 +570,12 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int 
 void DrawEnemies(EnemyManager *manager) {
     DrawParticles(&manager->particleManager);
 
+    // Desenha o Boss se estiver ativo
+    if (manager->bossActive) {
+        DrawBoss(&manager->boss, manager->bossFrames);
+    }
+
+    // Desenha inimigos normais
     for (int i = 0; i < ENEMY_COUNT; i++) {
         Enemy *enemy = &manager->enemies[i];
 
@@ -379,9 +599,78 @@ void UnloadEnemyManager(EnemyManager *manager) {
     for (int i = 0; i < 3; i++) {
         if (manager->enemyTextures[i].id != 0) UnloadTexture(manager->enemyTextures[i]);
     }
+
+    // Descarregar as texturas do Boss
+    for (int i = 0; i < BOSS_FRAME_COUNT; i++) {
+        if (manager->bossFrames[i].id != 0) UnloadTexture(manager->bossFrames[i]);
+    }
 }
 
 void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager) {
+
+    // --- Lógica de Colisão do Boss (VIDA E DANO AJUSTADOS) ---
+    Boss *boss = &enemyManager->boss;
+    if (enemyManager->bossActive && boss->active) {
+        for (int i = 0; i < MAX_PLAYER_BULLETS; i++) {
+            Bullet *bullet = &bulletManager->bullets[i];
+
+            if (!bullet->active) continue;
+
+            Vector2 bulletCenter = {
+                bullet->rect.x + bullet->rect.width / 2.0f,
+                bullet->rect.y + bullet->rect.height / 2.0f
+            };
+            float bulletRadius = bullet->rect.width / 2.0f;
+
+            float bossRadius = BOSS_SIZE_WIDTH / 2.0f;
+
+            // Colisão de Círculos para o Boss
+            if (CheckCollisionCircles(bulletCenter, bulletRadius, boss->position, bossRadius * 0.8f)) {
+
+                // Filtro: O Boss SÓ leva dano dos tiros de tipo 2 (Médio) e 3 (Forte).
+                if (bullet->type == 1 || bullet->type == 0 || bullet->type == 4) {
+                    // Bala destruída, mas Boss não leva dano nem pisca.
+                    bullet->active = false;
+                    PlaySound(audioManager->sfxWeak);
+                    continue;
+                }
+
+                // Aplica NOVO DANO
+                int damage = 0;
+                if (bullet->type == 2) {
+                    damage = 750; // 🎯 Dano Médio
+                } else if (bullet->type == 3) {
+                    damage = 1500; // 🎯 Dano Forte
+                }
+
+                if (damage > 0) {
+                    bullet->active = false;
+
+                    boss->health -= damage; // Aplica o dano
+                    boss->hitTimer = ENEMY_FLASH_DURATION; // Boss pisca em vermelho
+                    PlaySound(audioManager->sfxWeak);
+
+                    if (boss->health <= 0) {
+                        boss->active = false;
+                        enemyManager->bossActive = false;
+
+                        *playerGold += 100;
+
+                        PlaySound(audioManager->sfxExplosionEnemy);
+                        ExplodeEnemy(enemyManager, boss->position, EXPLOSION_PARTICLE_COUNT * 5);
+
+                        if (enemyManager->activeCount == 0) {
+                            enemyManager->wavesCompletedCount++;
+                            enemyManager->triggerShopReturn = true;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    // --- Lógica de Colisão de Inimigos Normais (Mantida) ---
     for (int i = 0; i < MAX_PLAYER_BULLETS; i++) {
         Bullet *bullet = &bulletManager->bullets[i];
 
@@ -404,7 +693,12 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
 
                 bullet->active = false;
 
-                enemy->health--;
+                // Dano para inimigos normais (Não alterado)
+                int damage = 1;
+                if (bullet->type == 2) damage = 2;
+                if (bullet->type == 3) damage = 4;
+
+                enemy->health -= damage;
                 enemy->hitTimer = ENEMY_FLASH_DURATION;
 
                 if (enemy->health <= 0) {
@@ -413,12 +707,16 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
                     enemy->explosionTimer = ENEMY_EXPLOSION_DURATION;
                     enemyManager->activeCount--;
 
-                    // Ouro reduzido: Gold = 2 + (Tipo do Inimigo * 2)
                     *playerGold += 2 + (enemy->type * 2);
 
                     PlaySound(audioManager->sfxExplosionEnemy);
 
                     ExplodeEnemy(enemyManager, enemy->position, EXPLOSION_PARTICLE_COUNT);
+
+                    if (!enemyManager->bossActive && enemyManager->activeCount == 0) {
+                         enemyManager->wavesCompletedCount++;
+                         enemyManager->triggerShopReturn = true;
+                    }
 
                 } else {
                     PlaySound(audioManager->sfxWeak);

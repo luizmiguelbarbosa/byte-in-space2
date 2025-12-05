@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "audio.h"
 
+// --- Constantes do Inimigo Normal ---
 #define ENEMY_COLS 11
 #define ENEMY_ROWS 5
 #define ENEMY_COUNT (ENEMY_COLS * ENEMY_ROWS)
@@ -15,10 +16,18 @@
 #define ENEMY_FLASH_DURATION 0.1f
 #define ENEMY_EXPLOSION_DURATION 0.4f
 #define ENEMY_GAME_OVER_Y 550.0f
-#define ENEMY_GAME_OVER_LINE_Y 500.0f
+#define ENEMY_GAME_OVER_LINE_Y 550.0f // Linha verde restaurada
 
+// --- Constantes de Partículas ---
 #define MAX_PARTICLES 500
 #define PARTICLE_LIFESPAN 0.8f
+
+// --- Constantes do Boss ---
+#define BOSS_FRAME_COUNT 30
+#define BOSS_ANIMATION_SPEED 0.08f
+#define BOSS_INITIAL_HEALTH 10000 // 🎯 NOVO VALOR: 10000
+#define BOSS_SIZE_WIDTH 128.0f
+#define BOSS_SIZE_HEIGHT 128.0f
 
 typedef struct {
     Vector2 position;
@@ -45,7 +54,27 @@ typedef struct {
     float explosionTimer;
 } Enemy;
 
-typedef struct {
+// --- Estrutura para o Boss ---
+typedef struct Boss {
+    bool active;
+    Vector2 position;
+    int health;
+    int maxHealth;
+    float hitTimer;
+    Rectangle rect;
+
+    // Animação
+    int currentFrame;
+    float frameTimer;
+
+    // Movimento
+    float movementTimer;
+    Vector2 targetPosition;
+
+} Boss;
+
+// --- EnemyManager ---
+typedef struct EnemyManager {
     Enemy enemies[ENEMY_COUNT];
     Texture2D enemyTextures[3];
     float speed;
@@ -62,9 +91,15 @@ typedef struct {
     bool triggerShopReturn;
 
     ParticleManager particleManager;
+
+    // Boss
+    Boss boss;
+    Texture2D bossFrames[BOSS_FRAME_COUNT];
+    bool bossActive;
 } EnemyManager;
 
 typedef struct BulletManager BulletManager;
+typedef struct AudioManager AudioManager;
 
 void InitEnemyManager(EnemyManager *manager, int screenWidth, int screenHeight);
 void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int *playerLives, bool *gameOver);

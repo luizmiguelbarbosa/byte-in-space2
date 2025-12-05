@@ -135,7 +135,7 @@ int main(void) {
     InitAudioDevice();
 
     // --- SHADER CRT ---
-    crtShader = LoadShader(0, "assets/shaders/crt16.fs");
+    crtShader = LoadShader(0, "assets/shaders/crt22.fs");
 
     locResolution = GetShaderLocation(crtShader, "resolution");
     locTime       = GetShaderLocation(crtShader, "time");
