@@ -348,17 +348,30 @@ int main(void) {
             EndShaderMode();
 
             if (currentState == STATE_GAMEPLAY && offsetX > 0) {
-                // CORREÇÃO AQUI: Adicionar player.currentLives como último argumento para exibir a vida correta.
-                DrawHudSide(&hud, true, offsetY, player.energyCharge, player.hasDoubleShot, player.hasShield, player.extraLives, player.currentLives);
+                // --- CHAMADA LADO ESQUERDO (VIDA, ENERGIA, POWER-UPS) ---
+                DrawHudSide(&hud,
+                            true,
+                            offsetY,
+                            player.energyCharge,
+                            player.hasDoubleShot,
+                            player.hasShield,
+                            player.extraLives,
+                            player.currentLives,
+                            player.gold);
 
-                // Chamada do lado direito (Score)
-                // É necessário incluir o novo argumento, mesmo que ele não seja usado para desenhar o Score.
-                DrawHudSide(&hud, false, offsetY, 0.0f, false, false, 0, player.currentLives);
+                // --- CHAMADA LADO DIREITO (GOLD) ---
+                DrawHudSide(&hud,
+                            false,
+                            offsetY,
+                            0.0f, // Ignorado
+                            false, // Ignorado
+                            false, // Ignorado
+                            0, // Ignorado
+                            player.currentLives, // Necessário para a assinatura
+                            player.gold);
             }
 
-            // Exibir Gold para debug ou feedback visual
-            DrawText(TextFormat("GOLD: %d", player.gold), 10, 70, 20, YELLOW);
-            DrawFPS(10, 50);
+            // O DrawFPS(10, 50) foi removido.
 
         EndDrawing();
     }

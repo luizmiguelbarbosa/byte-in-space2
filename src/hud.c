@@ -9,6 +9,10 @@
 #define SHURIKEN_PATH "assets/images/sprites/icone_powerup_shurikens.png"
 #define SHIELD_PATH "assets/images/sprites/shield.png"
 
+// --- ADICIONADO: Caminho para a textura do Gold (Ouro) ---
+#define GOLD_PATH "assets/images/sprites/gold.png"
+// ---------------------------------------------------------
+
 #define ICON_HUD_SCALE 0.12f
 
 void InitHud(Hud *hud) {
@@ -31,14 +35,19 @@ void InitHud(Hud *hud) {
     if (hud->shieldTexture.id != 0) SetTextureFilter(hud->shieldTexture, TEXTURE_FILTER_POINT);
     else printf("[ERRO] Icone de Escudo nao encontrado: %s\n", SHIELD_PATH);
 
+    // --- ADICIONADO: Carregar Textura do Gold (Ouro) ---
+    hud->goldTexture = LoadTexture(GOLD_PATH);
+    if (hud->goldTexture.id != 0) SetTextureFilter(hud->goldTexture, TEXTURE_FILTER_POINT);
+    else printf("[ERRO] Icone de Gold nao encontrado: %s\n", GOLD_PATH);
+    // ----------------------------------------------------
 }
 
 void UpdateHud(Hud *hud, float deltaTime) {
 }
 
-// --- CORREÇÃO: Adicionando 'drawLives' ao final da lista de parâmetros ---
-void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives, int drawLives) {
-// -------------------------------------------------------------------------
+// --- CORREÇÃO: Assinatura da função DrawHudSide com o parâmetro 'currentGold' ---
+void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives, int drawLives, int currentGold) {
+// ------------------------------------------------------------------------------------------------------------------------------------------------------
     int fontSize = 20;
     int screenW = GetScreenWidth();
     int targetY = 10;
@@ -61,10 +70,8 @@ void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bo
             DrawTexturePro(hud->lifeIconTexture, sourceRecLife, destRecLife, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
         }
 
-        // --- CORREÇÃO: Usa drawLives (vida base 3 ou 5) + extraLives ---
         char livesText[10];
         sprintf(livesText, "x%02d", drawLives + extraLives);
-        // ----------------------------------------------------------------
 
         int textX = iconX + (int)iconDrawWidth + 5;
         int textY = (int)currentY + (int)iconDrawHeight / 2 - fontSize / 2;
@@ -105,13 +112,35 @@ void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bo
             }
         }
 
-    } else {
-        char scoreText[32];
-        sprintf(scoreText, "SCORE: %06d", hud->score);
-        int scoreTextWidth = MeasureText(scoreText, fontSize);
-        int scoreTextX = screenW - scoreTextWidth - 10;
-        int scoreTextY = targetY;
-        DrawText(scoreText, scoreTextX, scoreTextY, fontSize, WHITE);
+    } else { // Lado direito da tela (Apenas Gold)
+        float currentY = (float)targetY;
+
+        // --- REMOVIDO: Desenho do Score (bloco removido) ---
+
+        // --- ADICIONADO/AJUSTADO: Desenho do Gold (Ouro) no topo ---
+        if (hud->goldTexture.id != 0) {
+            // 1. Prepara o texto do Gold (Ouro)
+            char goldText[32];
+            sprintf(goldText, "%d", currentGold);
+            int goldTextWidth = MeasureText(goldText, fontSize);
+
+            // 2. Calcula a posição do texto (alinha à direita)
+            int textGoldX = screenW - goldTextWidth - 10;
+            int textGoldY = (int)currentY + (int)iconDrawHeight / 2 - fontSize / 2;
+
+            // 3. Calcula a posição do ícone (o ícone fica à esquerda do texto)
+            int iconX = textGoldX - (int)iconDrawWidth - 5; // 5 é a margem entre o ícone e o texto
+
+            // 4. Desenha o ícone
+            Rectangle sourceRecGold = { 0.0f, 0.0f, (float)hud->goldTexture.width, (float)hud->goldTexture.height };
+            Rectangle destRecGold = { (float)iconX, currentY, iconDrawWidth, iconDrawHeight };
+            DrawTexturePro(hud->goldTexture, sourceRecGold, destRecGold, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
+
+            // 5. Desenha o texto do Gold
+            DrawText(goldText, textGoldX, textGoldY, fontSize, WHITE);
+            currentY += iconDrawHeight + 10.0f;
+        }
+        // -----------------------------------------------------------
     }
 }
 
@@ -120,5 +149,7 @@ void UnloadHud(Hud *hud) {
     if (hud->energyIconTexture.id != 0) UnloadTexture(hud->energyIconTexture);
     if (hud->shurikenTexture.id != 0) UnloadTexture(hud->shurikenTexture);
     if (hud->shieldTexture.id != 0) UnloadTexture(hud->shieldTexture);
-
+    // --- ADICIONADO: Descarregar Textura do Gold (Ouro) ---
+    if (hud->goldTexture.id != 0) UnloadTexture(hud->goldTexture);
+    // ------------------------------------------------------
 }
