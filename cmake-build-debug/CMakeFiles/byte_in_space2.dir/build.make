@@ -43,19 +43,19 @@ cmake_force:
 SHELL = cmd.exe
 
 # The CMake executable.
-CMAKE_COMMAND = "C:\Program Files\JetBrains\CLion 2025.2\bin\cmake\win\x64\bin\cmake.exe"
+CMAKE_COMMAND = "C:\Program Files\JetBrains\CLion 2025.2.2\bin\cmake\win\x64\bin\cmake.exe"
 
 # The command to remove a file.
-RM = "C:\Program Files\JetBrains\CLion 2025.2\bin\cmake\win\x64\bin\cmake.exe" -E rm -f
+RM = "C:\Program Files\JetBrains\CLion 2025.2.2\bin\cmake\win\x64\bin\cmake.exe" -E rm -f
 
 # Escaping for special characters.
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\lmsbn\byte
+CMAKE_SOURCE_DIR = C:\Users\luiz1\byte
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\lmsbn\byte\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\luiz1\byte\cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/byte_in_space2.dir/depend.make
@@ -73,183 +73,183 @@ CMakeFiles/byte_in_space2.dir/codegen:
 
 CMakeFiles/byte_in_space2.dir/src/audio.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/audio.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/audio.c.obj: C:/Users/lmsbn/byte/src/audio.c
+CMakeFiles/byte_in_space2.dir/src/audio.c.obj: C:/Users/luiz1/byte/src/audio.c
 CMakeFiles/byte_in_space2.dir/src/audio.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/byte_in_space2.dir/src/audio.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/audio.c.obj -MF CMakeFiles\byte_in_space2.dir\src\audio.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\audio.c.obj -c C:\Users\lmsbn\byte\src\audio.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/byte_in_space2.dir/src/audio.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/audio.c.obj -MF CMakeFiles\byte_in_space2.dir\src\audio.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\audio.c.obj -c C:\Users\luiz1\byte\src\audio.c
 
 CMakeFiles/byte_in_space2.dir/src/audio.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/audio.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\audio.c > CMakeFiles\byte_in_space2.dir\src\audio.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\audio.c > CMakeFiles\byte_in_space2.dir\src\audio.c.i
 
 CMakeFiles/byte_in_space2.dir/src/audio.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/audio.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\audio.c -o CMakeFiles\byte_in_space2.dir\src\audio.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\audio.c -o CMakeFiles\byte_in_space2.dir\src\audio.c.s
 
 CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: C:/Users/lmsbn/byte/src/bullet.c
+CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: C:/Users/luiz1/byte/src/bullet.c
 CMakeFiles/byte_in_space2.dir/src/bullet.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/byte_in_space2.dir/src/bullet.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/bullet.c.obj -MF CMakeFiles\byte_in_space2.dir\src\bullet.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\bullet.c.obj -c C:\Users\lmsbn\byte\src\bullet.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/byte_in_space2.dir/src/bullet.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/bullet.c.obj -MF CMakeFiles\byte_in_space2.dir\src\bullet.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\bullet.c.obj -c C:\Users\luiz1\byte\src\bullet.c
 
 CMakeFiles/byte_in_space2.dir/src/bullet.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/bullet.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\bullet.c > CMakeFiles\byte_in_space2.dir\src\bullet.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\bullet.c > CMakeFiles\byte_in_space2.dir\src\bullet.c.i
 
 CMakeFiles/byte_in_space2.dir/src/bullet.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/bullet.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\bullet.c -o CMakeFiles\byte_in_space2.dir\src\bullet.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\bullet.c -o CMakeFiles\byte_in_space2.dir\src\bullet.c.s
 
 CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: C:/Users/lmsbn/byte/src/cutscene.c
+CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: C:/Users/luiz1/byte/src/cutscene.c
 CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj -MF CMakeFiles\byte_in_space2.dir\src\cutscene.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\cutscene.c.obj -c C:\Users\lmsbn\byte\src\cutscene.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj -MF CMakeFiles\byte_in_space2.dir\src\cutscene.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\cutscene.c.obj -c C:\Users\luiz1\byte\src\cutscene.c
 
 CMakeFiles/byte_in_space2.dir/src/cutscene.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/cutscene.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\cutscene.c > CMakeFiles\byte_in_space2.dir\src\cutscene.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\cutscene.c > CMakeFiles\byte_in_space2.dir\src\cutscene.c.i
 
 CMakeFiles/byte_in_space2.dir/src/cutscene.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/cutscene.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\cutscene.c -o CMakeFiles\byte_in_space2.dir\src\cutscene.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\cutscene.c -o CMakeFiles\byte_in_space2.dir\src\cutscene.c.s
 
 CMakeFiles/byte_in_space2.dir/src/enemy.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/enemy.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/enemy.c.obj: C:/Users/lmsbn/byte/src/enemy.c
+CMakeFiles/byte_in_space2.dir/src/enemy.c.obj: C:/Users/luiz1/byte/src/enemy.c
 CMakeFiles/byte_in_space2.dir/src/enemy.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/byte_in_space2.dir/src/enemy.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/enemy.c.obj -MF CMakeFiles\byte_in_space2.dir\src\enemy.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\enemy.c.obj -c C:\Users\lmsbn\byte\src\enemy.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/byte_in_space2.dir/src/enemy.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/enemy.c.obj -MF CMakeFiles\byte_in_space2.dir\src\enemy.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\enemy.c.obj -c C:\Users\luiz1\byte\src\enemy.c
 
 CMakeFiles/byte_in_space2.dir/src/enemy.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/enemy.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\enemy.c > CMakeFiles\byte_in_space2.dir\src\enemy.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\enemy.c > CMakeFiles\byte_in_space2.dir\src\enemy.c.i
 
 CMakeFiles/byte_in_space2.dir/src/enemy.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/enemy.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\enemy.c -o CMakeFiles\byte_in_space2.dir\src\enemy.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\enemy.c -o CMakeFiles\byte_in_space2.dir\src\enemy.c.s
 
 CMakeFiles/byte_in_space2.dir/src/game_state.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/game_state.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/game_state.c.obj: C:/Users/lmsbn/byte/src/game_state.c
+CMakeFiles/byte_in_space2.dir/src/game_state.c.obj: C:/Users/luiz1/byte/src/game_state.c
 CMakeFiles/byte_in_space2.dir/src/game_state.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/byte_in_space2.dir/src/game_state.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/game_state.c.obj -MF CMakeFiles\byte_in_space2.dir\src\game_state.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\game_state.c.obj -c C:\Users\lmsbn\byte\src\game_state.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/byte_in_space2.dir/src/game_state.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/game_state.c.obj -MF CMakeFiles\byte_in_space2.dir\src\game_state.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\game_state.c.obj -c C:\Users\luiz1\byte\src\game_state.c
 
 CMakeFiles/byte_in_space2.dir/src/game_state.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/game_state.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\game_state.c > CMakeFiles\byte_in_space2.dir\src\game_state.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\game_state.c > CMakeFiles\byte_in_space2.dir\src\game_state.c.i
 
 CMakeFiles/byte_in_space2.dir/src/game_state.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/game_state.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\game_state.c -o CMakeFiles\byte_in_space2.dir\src\game_state.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\game_state.c -o CMakeFiles\byte_in_space2.dir\src\game_state.c.s
 
 CMakeFiles/byte_in_space2.dir/src/hud.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/hud.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/hud.c.obj: C:/Users/lmsbn/byte/src/hud.c
+CMakeFiles/byte_in_space2.dir/src/hud.c.obj: C:/Users/luiz1/byte/src/hud.c
 CMakeFiles/byte_in_space2.dir/src/hud.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/byte_in_space2.dir/src/hud.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/hud.c.obj -MF CMakeFiles\byte_in_space2.dir\src\hud.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\hud.c.obj -c C:\Users\lmsbn\byte\src\hud.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/byte_in_space2.dir/src/hud.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/hud.c.obj -MF CMakeFiles\byte_in_space2.dir\src\hud.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\hud.c.obj -c C:\Users\luiz1\byte\src\hud.c
 
 CMakeFiles/byte_in_space2.dir/src/hud.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/hud.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\hud.c > CMakeFiles\byte_in_space2.dir\src\hud.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\hud.c > CMakeFiles\byte_in_space2.dir\src\hud.c.i
 
 CMakeFiles/byte_in_space2.dir/src/hud.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/hud.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\hud.c -o CMakeFiles\byte_in_space2.dir\src\hud.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\hud.c -o CMakeFiles\byte_in_space2.dir\src\hud.c.s
 
 CMakeFiles/byte_in_space2.dir/src/main.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/main.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/main.c.obj: C:/Users/lmsbn/byte/src/main.c
+CMakeFiles/byte_in_space2.dir/src/main.c.obj: C:/Users/luiz1/byte/src/main.c
 CMakeFiles/byte_in_space2.dir/src/main.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/byte_in_space2.dir/src/main.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/main.c.obj -MF CMakeFiles\byte_in_space2.dir\src\main.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\main.c.obj -c C:\Users\lmsbn\byte\src\main.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/byte_in_space2.dir/src/main.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/main.c.obj -MF CMakeFiles\byte_in_space2.dir\src\main.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\main.c.obj -c C:\Users\luiz1\byte\src\main.c
 
 CMakeFiles/byte_in_space2.dir/src/main.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/main.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\main.c > CMakeFiles\byte_in_space2.dir\src\main.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\main.c > CMakeFiles\byte_in_space2.dir\src\main.c.i
 
 CMakeFiles/byte_in_space2.dir/src/main.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/main.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\main.c -o CMakeFiles\byte_in_space2.dir\src\main.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\main.c -o CMakeFiles\byte_in_space2.dir\src\main.c.s
 
 CMakeFiles/byte_in_space2.dir/src/map.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/map.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/map.c.obj: C:/Users/lmsbn/byte/src/map.c
+CMakeFiles/byte_in_space2.dir/src/map.c.obj: C:/Users/luiz1/byte/src/map.c
 CMakeFiles/byte_in_space2.dir/src/map.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/byte_in_space2.dir/src/map.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/map.c.obj -MF CMakeFiles\byte_in_space2.dir\src\map.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\map.c.obj -c C:\Users\lmsbn\byte\src\map.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/byte_in_space2.dir/src/map.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/map.c.obj -MF CMakeFiles\byte_in_space2.dir\src\map.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\map.c.obj -c C:\Users\luiz1\byte\src\map.c
 
 CMakeFiles/byte_in_space2.dir/src/map.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/map.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\map.c > CMakeFiles\byte_in_space2.dir\src\map.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\map.c > CMakeFiles\byte_in_space2.dir\src\map.c.i
 
 CMakeFiles/byte_in_space2.dir/src/map.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/map.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\map.c -o CMakeFiles\byte_in_space2.dir\src\map.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\map.c -o CMakeFiles\byte_in_space2.dir\src\map.c.s
 
 CMakeFiles/byte_in_space2.dir/src/physics.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/physics.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/physics.c.obj: C:/Users/lmsbn/byte/src/physics.c
+CMakeFiles/byte_in_space2.dir/src/physics.c.obj: C:/Users/luiz1/byte/src/physics.c
 CMakeFiles/byte_in_space2.dir/src/physics.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/byte_in_space2.dir/src/physics.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/physics.c.obj -MF CMakeFiles\byte_in_space2.dir\src\physics.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\physics.c.obj -c C:\Users\lmsbn\byte\src\physics.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/byte_in_space2.dir/src/physics.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/physics.c.obj -MF CMakeFiles\byte_in_space2.dir\src\physics.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\physics.c.obj -c C:\Users\luiz1\byte\src\physics.c
 
 CMakeFiles/byte_in_space2.dir/src/physics.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/physics.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\physics.c > CMakeFiles\byte_in_space2.dir\src\physics.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\physics.c > CMakeFiles\byte_in_space2.dir\src\physics.c.i
 
 CMakeFiles/byte_in_space2.dir/src/physics.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/physics.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\physics.c -o CMakeFiles\byte_in_space2.dir\src\physics.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\physics.c -o CMakeFiles\byte_in_space2.dir\src\physics.c.s
 
 CMakeFiles/byte_in_space2.dir/src/player.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/player.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/player.c.obj: C:/Users/lmsbn/byte/src/player.c
+CMakeFiles/byte_in_space2.dir/src/player.c.obj: C:/Users/luiz1/byte/src/player.c
 CMakeFiles/byte_in_space2.dir/src/player.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/byte_in_space2.dir/src/player.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/player.c.obj -MF CMakeFiles\byte_in_space2.dir\src\player.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\player.c.obj -c C:\Users\lmsbn\byte\src\player.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/byte_in_space2.dir/src/player.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/player.c.obj -MF CMakeFiles\byte_in_space2.dir\src\player.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\player.c.obj -c C:\Users\luiz1\byte\src\player.c
 
 CMakeFiles/byte_in_space2.dir/src/player.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/player.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\player.c > CMakeFiles\byte_in_space2.dir\src\player.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\player.c > CMakeFiles\byte_in_space2.dir\src\player.c.i
 
 CMakeFiles/byte_in_space2.dir/src/player.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/player.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\player.c -o CMakeFiles\byte_in_space2.dir\src\player.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\player.c -o CMakeFiles\byte_in_space2.dir\src\player.c.s
 
 CMakeFiles/byte_in_space2.dir/src/shop.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/shop.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/shop.c.obj: C:/Users/lmsbn/byte/src/shop.c
+CMakeFiles/byte_in_space2.dir/src/shop.c.obj: C:/Users/luiz1/byte/src/shop.c
 CMakeFiles/byte_in_space2.dir/src/shop.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/byte_in_space2.dir/src/shop.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/shop.c.obj -MF CMakeFiles\byte_in_space2.dir\src\shop.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\shop.c.obj -c C:\Users\lmsbn\byte\src\shop.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building C object CMakeFiles/byte_in_space2.dir/src/shop.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/shop.c.obj -MF CMakeFiles\byte_in_space2.dir\src\shop.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\shop.c.obj -c C:\Users\luiz1\byte\src\shop.c
 
 CMakeFiles/byte_in_space2.dir/src/shop.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/shop.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\shop.c > CMakeFiles\byte_in_space2.dir\src\shop.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\shop.c > CMakeFiles\byte_in_space2.dir\src\shop.c.i
 
 CMakeFiles/byte_in_space2.dir/src/shop.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/shop.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\shop.c -o CMakeFiles\byte_in_space2.dir\src\shop.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\shop.c -o CMakeFiles\byte_in_space2.dir\src\shop.c.s
 
 CMakeFiles/byte_in_space2.dir/src/star.c.obj: CMakeFiles/byte_in_space2.dir/flags.make
 CMakeFiles/byte_in_space2.dir/src/star.c.obj: CMakeFiles/byte_in_space2.dir/includes_C.rsp
-CMakeFiles/byte_in_space2.dir/src/star.c.obj: C:/Users/lmsbn/byte/src/star.c
+CMakeFiles/byte_in_space2.dir/src/star.c.obj: C:/Users/luiz1/byte/src/star.c
 CMakeFiles/byte_in_space2.dir/src/star.c.obj: CMakeFiles/byte_in_space2.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/byte_in_space2.dir/src/star.c.obj"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/star.c.obj -MF CMakeFiles\byte_in_space2.dir\src\star.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\star.c.obj -c C:\Users\lmsbn\byte\src\star.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/byte_in_space2.dir/src/star.c.obj"
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/byte_in_space2.dir/src/star.c.obj -MF CMakeFiles\byte_in_space2.dir\src\star.c.obj.d -o CMakeFiles\byte_in_space2.dir\src\star.c.obj -c C:\Users\luiz1\byte\src\star.c
 
 CMakeFiles/byte_in_space2.dir/src/star.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/byte_in_space2.dir/src/star.c.i"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\lmsbn\byte\src\star.c > CMakeFiles\byte_in_space2.dir\src\star.c.i
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\luiz1\byte\src\star.c > CMakeFiles\byte_in_space2.dir\src\star.c.i
 
 CMakeFiles/byte_in_space2.dir/src/star.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/byte_in_space2.dir/src/star.c.s"
-	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\lmsbn\byte\src\star.c -o CMakeFiles\byte_in_space2.dir\src\star.c.s
+	C:\PROGRA~1\JETBRA~1\CLION2~1.2\bin\mingw\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\luiz1\byte\src\star.c -o CMakeFiles\byte_in_space2.dir\src\star.c.s
 
 # Object files for target byte_in_space2
 byte_in_space2_OBJECTS = \
@@ -285,10 +285,10 @@ byte_in_space2.exe: CMakeFiles/byte_in_space2.dir/build.make
 byte_in_space2.exe: CMakeFiles/byte_in_space2.dir/linkLibs.rsp
 byte_in_space2.exe: CMakeFiles/byte_in_space2.dir/objects1.rsp
 byte_in_space2.exe: CMakeFiles/byte_in_space2.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking C executable byte_in_space2.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking C executable byte_in_space2.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\byte_in_space2.dir\link.txt --verbose=$(VERBOSE)
-	"C:\Program Files\JetBrains\CLion 2025.2\bin\cmake\win\x64\bin\cmake.exe" -E copy_directory C:/Users/lmsbn/byte/assets C:/Users/lmsbn/byte/cmake-build-debug/assets
-	"C:\Program Files\JetBrains\CLion 2025.2\bin\cmake\win\x64\bin\cmake.exe" -E copy C:/Users/lmsbn/byte/external/raylib_windows/lib/raylib.dll C:/Users/lmsbn/byte/cmake-build-debug/raylib.dll
+	"C:\Program Files\JetBrains\CLion 2025.2.2\bin\cmake\win\x64\bin\cmake.exe" -E copy_directory C:/Users/luiz1/byte/assets C:/Users/luiz1/byte/cmake-build-debug/assets
+	"C:\Program Files\JetBrains\CLion 2025.2.2\bin\cmake\win\x64\bin\cmake.exe" -E copy C:/Users/luiz1/byte/external/raylib_windows/lib/raylib.dll C:/Users/luiz1/byte/cmake-build-debug/raylib.dll
 
 # Rule to build all files generated by this target.
 CMakeFiles/byte_in_space2.dir/build: byte_in_space2.exe
@@ -299,6 +299,6 @@ CMakeFiles/byte_in_space2.dir/clean:
 .PHONY : CMakeFiles/byte_in_space2.dir/clean
 
 CMakeFiles/byte_in_space2.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\lmsbn\byte C:\Users\lmsbn\byte C:\Users\lmsbn\byte\cmake-build-debug C:\Users\lmsbn\byte\cmake-build-debug C:\Users\lmsbn\byte\cmake-build-debug\CMakeFiles\byte_in_space2.dir\DependInfo.cmake "--color=$(COLOR)"
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\luiz1\byte C:\Users\luiz1\byte C:\Users\luiz1\byte\cmake-build-debug C:\Users\luiz1\byte\cmake-build-debug C:\Users\luiz1\byte\cmake-build-debug\CMakeFiles\byte_in_space2.dir\DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/byte_in_space2.dir/depend
 

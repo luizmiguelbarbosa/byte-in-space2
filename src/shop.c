@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <math.h>
 
+// Definir CLAMP para compatibilidade, se necessário
+#ifndef __RAYMATH_H__
+    #define CLAMP(v, min, max) ((v) < (min) ? (min) : ((v) > (max) ? (max) : (v)))
+    #define Clamp(v, min, max) CLAMP((v), (min), (max))
+#endif
+
+
 #define VENDOR_BASE_FRAME_W 64.0f
 #define VENDOR_BASE_FRAME_H 64.0f
 #define VENDOR_DRAW_SCALE 6.0f
@@ -112,11 +119,6 @@ void DrawShopEnvironment(int width, int height) {
 void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *state, float deltaTime) {
     UpdateStarField(stars, deltaTime);
 
-    #ifndef __RAYMATH_H__
-        #define CLAMP(v, min, max) ((v) < (min) ? (min) : ((v) > (max) ? (max) : (v)))
-        #define Clamp(v, min, max) CLAMP((v), (min), (max))
-    #endif
-
     float pW = player->texture.width * player->scale;
     float pH = player->texture.height * player->scale;
     Rectangle playerRect = { player->position.x, player->position.y, pW, pH };
@@ -135,11 +137,18 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
         float playerRelativeX = (player->position.x - (800.0f / 2.0f)) / (800.0f / 2.0f);
         shop->portalParallaxOffset = playerRelativeX * 50.0f * PORTAL_Z_DISTANCE;
 
+        // --- INÍCIO DA CORREÇÃO: Exigir KEY_P para sair do portal ---
         if (CheckCollisionRecs(playerRect, shop->exitArea)) {
-            *state = STATE_GAMEPLAY;
-            player->position = (Vector2){ 400 - pW/2, 600 - 100 };
-            return;
+            // Se o jogador está na área do portal, informa que precisa de 'P'
+            sprintf(shop->dialogText, "PORTAL PRONTO! Pressione P para sair e voltar a acao.");
+
+            if (IsKeyPressed(KEY_P)) {
+                *state = STATE_GAMEPLAY;
+                player->position = (Vector2){ 400 - pW/2, 600 - 100 };
+                return;
+            }
         }
+        // --- FIM DA CORREÇÃO ---
     }
 
     if (shop->vendor.isHappy) {
@@ -228,11 +237,13 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
             }
         }
 
-        if (!isPlayerNearItem) {
+        // Garante que a mensagem do portal não sobrescreva a mensagem de compra/interação do item.
+        if (!isPlayerNearItem && !CheckCollisionRecs(playerRect, shop->exitArea)) {
             if (!player->canCharge) {
                  sprintf(shop->dialogText, "SEJA BEM-VINDO, VIAJANTE! O UPGRADE DE ENERGIA E POR MINHA CONTA.");
             } else {
-                sprintf(shop->dialogText, "EXPLORE OS PRODUTOS! Mova-se ate o portal no centro para SAIR. CREDITOS: $%d", player->gold);
+                // Mensagem padrão quando não está perto de um item ou portal
+                sprintf(shop->dialogText, "EXPLORE OS PRODUTOS! Entre no portal e aperte P para SAIR. CREDITOS: $%d", player->gold);
             }
         }
     }
