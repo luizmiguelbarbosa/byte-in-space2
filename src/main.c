@@ -119,7 +119,7 @@ void DrawWaveStartUI(EnemyManager *manager) {
 
     // O contador sempre deve ser amarelo e visível
     DrawText(timerText, (GAME_WIDTH - timerTextWidth) / 2, GAME_HEIGHT / 2 + 20, timerFontSize, Fade(YELLOW, alpha));
-} // CHAVE DE FECHAMENTO ADICIONADA AQUI
+}
 
 int main(void) {
     // FULLSCREEN antes da janela
@@ -252,7 +252,7 @@ int main(void) {
 
                 // 3. Atualização de Inimigos e Timers (Sempre atualiza para gerenciar o spawn e o countdown)
                 // CHAMADA CORRIGIDA: Passa os ponteiros para hud.lives e enemyManager.gameOver
-                UpdateEnemies(&enemyManager, dt, GAME_WIDTH, &hud.lives, &enemyManager.gameOver);
+                UpdateEnemies(&enemyManager, dt, GAME_WIDTH, &player.currentLives, &enemyManager.gameOver);
 
                 // 4. Lógica de Colisão (só ocorre quando o jogo está ativo, para evitar tiros acidentais)
                 if (!isActionPaused) {
@@ -348,8 +348,12 @@ int main(void) {
             EndShaderMode();
 
             if (currentState == STATE_GAMEPLAY && offsetX > 0) {
-                DrawHudSide(&hud, true, offsetY, player.energyCharge, player.hasDoubleShot, player.hasShield, player.extraLives);
-                DrawHudSide(&hud, false, offsetY, 0.0f, false, false, 0);
+                // CORREÇÃO AQUI: Adicionar player.currentLives como último argumento para exibir a vida correta.
+                DrawHudSide(&hud, true, offsetY, player.energyCharge, player.hasDoubleShot, player.hasShield, player.extraLives, player.currentLives);
+
+                // Chamada do lado direito (Score)
+                // É necessário incluir o novo argumento, mesmo que ele não seja usado para desenhar o Score.
+                DrawHudSide(&hud, false, offsetY, 0.0f, false, false, 0, player.currentLives);
             }
 
             // Exibir Gold para debug ou feedback visual

@@ -210,11 +210,15 @@ void UpdateShop(ShopScene *shop, Player *player, StarField *stars, GameState *st
                                         }
                                         break;
                                     case ITEM_SHIELD:
+                                        // --- CORREÇÃO: Aumenta a vida de 3 para 5 ao comprar o escudo ---
                                         player->hasShield = true;
+                                        player->maxLives = 5;
+                                        player->currentLives = 5; // Cura o jogador ao receber o upgrade
                                         if (player->shieldTextureAppearance.id != 0) {
                                             player->texture = player->shieldTextureAppearance;
                                         }
                                         break;
+                                        // ----------------------------------------------------------------
                                     case ITEM_EXTRA_LIFE:
                                         player->extraLives++;
                                         if (player->extraLifeTextureAppearance.id != 0) {

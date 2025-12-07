@@ -6,7 +6,7 @@
 
 typedef struct {
     int score;
-    int lives;
+    // Removido 'int lives;' pois a vida será lida diretamente do Player.
     Texture2D lifeIconTexture;
     Texture2D energyIconTexture;
 
@@ -16,7 +16,10 @@ typedef struct {
 
 void InitHud(Hud *hud);
 void UpdateHud(Hud *hud, float deltaTime);
-void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives);
+// --- CORREÇÃO: Adicionando 'drawLives' para exibir a vida base ---
+void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives, int drawLives);
+// ----------------------------------------------------------------
+
 void UnloadHud(Hud *hud);
 
 #endif // HUD_H

@@ -13,7 +13,7 @@
 
 void InitHud(Hud *hud) {
     hud->score = 0;
-    hud->lives = 3;
+    // O campo 'hud->lives' foi removido e a vida agora é gerenciada pelo Player.
 
     hud->lifeIconTexture = LoadTexture(LIFE_ICON_PATH);
     if (hud->lifeIconTexture.id != 0) SetTextureFilter(hud->lifeIconTexture, TEXTURE_FILTER_POINT);
@@ -36,7 +36,9 @@ void InitHud(Hud *hud) {
 void UpdateHud(Hud *hud, float deltaTime) {
 }
 
-void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives) {
+// --- CORREÇÃO: Adicionando 'drawLives' ao final da lista de parâmetros ---
+void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bool hasDoubleShot, bool hasShield, int extraLives, int drawLives) {
+// -------------------------------------------------------------------------
     int fontSize = 20;
     int screenW = GetScreenWidth();
     int targetY = 10;
@@ -59,8 +61,10 @@ void DrawHudSide(Hud *hud, bool isLeft, int marginHeight, float energyCharge, bo
             DrawTexturePro(hud->lifeIconTexture, sourceRecLife, destRecLife, (Vector2){ 0.0f, 0.0f }, 0.0f, WHITE);
         }
 
+        // --- CORREÇÃO: Usa drawLives (vida base 3 ou 5) + extraLives ---
         char livesText[10];
-        sprintf(livesText, "x%02d", hud->lives + extraLives);
+        sprintf(livesText, "x%02d", drawLives + extraLives);
+        // ----------------------------------------------------------------
 
         int textX = iconX + (int)iconDrawWidth + 5;
         int textY = (int)currentY + (int)iconDrawHeight / 2 - fontSize / 2;

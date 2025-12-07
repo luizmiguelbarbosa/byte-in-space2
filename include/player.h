@@ -16,13 +16,18 @@ typedef struct {
     Texture2D texture;
     Texture2D baseTexture;
     Texture2D shurikenTexture;
-    Texture2D shieldTextureAppearance; // NOVA
-    Texture2D extraLifeTextureAppearance; // NOVA
+    Texture2D shieldTextureAppearance;
+    Texture2D extraLifeTextureAppearance;
     Vector2 position;
     float speed;
     float scale;
 
     int gold;
+
+    // --- Campos de Vida Adicionados ---
+    int maxLives;
+    int currentLives;
+    // ----------------------------------
 
     float energyCharge;
     bool isCharging;

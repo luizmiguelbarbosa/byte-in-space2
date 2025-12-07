@@ -52,6 +52,11 @@ void InitPlayer(Player *player) {
 
     player->gold = 0;
 
+    // --- CORREÇÃO: Inicializa a vida do jogador como 3 ---
+    player->maxLives = 3;
+    player->currentLives = 3;
+    // ----------------------------------------------------
+
     player->energyCharge = 0.0f;
     player->isCharging = false;
     player->canCharge = false;
