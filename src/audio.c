@@ -1,14 +1,14 @@
+// audio.c
 #include "audio.h"
 #include <stdio.h>
 #include "raylib.h"
 
-// VOLUME AJUSTADO: BACKGROUND_VOLUME reduzido de 0.5f para 0.3f
 #define BACKGROUND_VOLUME 0.3f
 #define SFX_VOLUME 0.3f
 #define CHARGE_VOLUME 0.25f
-// VOLUME AJUSTADO: EXPLOSION_VOLUME aumentado de 0.35f para 0.6f
-#define EXPLOSION_VOLUME 0.6f // Volume da explosão
-#define CUTSCENE_VOLUME 0.6f // Volume um pouco mais alto para a cutscene
+#define EXPLOSION_VOLUME 0.6f
+#define CUTSCENE_VOLUME 0.6f
+#define ENDING_VOLUME 0.6f // <--- NOVO: Volume para a música final
 
 void InitAudioManager(AudioManager *manager) {
     if (!IsAudioDeviceReady()) {
@@ -20,7 +20,13 @@ void InitAudioManager(AudioManager *manager) {
     manager->musicGameplay = LoadMusicStream("assets/ost/murder_byte.mp3");
     manager->musicCutscene = LoadMusicStream("assets/ost/cutscene_byte1.mp3");
 
-    // Verificação simples para debug
+    // <--- NOVO: Carrega a Música Final ---
+    manager->musicEnding = LoadMusicStream("assets/ost/musicafinal.mp3");
+    if (manager->musicEnding.frameCount == 0) {
+        printf("[AUDIO ERROR] Nao foi possivel carregar musicafinal.mp3. Verifique o caminho 'assets/ost/musicafinal.mp3'.\n");
+    }
+    // ------------------------------------
+
     if (manager->musicCutscene.frameCount == 0) {
         printf("[AUDIO ERROR] Nao foi possivel carregar cutscene_byte1.mp3. Verifique o caminho 'assets/ost/cutscene_byte1.mp3' relativo ao executavel.\n");
     }
@@ -39,22 +45,20 @@ void InitAudioManager(AudioManager *manager) {
         printf("[AUDIO ERROR] Nao foi possivel carregar explosion_enemy.mp3. Verifique o caminho 'assets/ost/explosion_enemy.mp3'.\n");
     }
 
-
     // --- CONFIGURAÇÃO DE VOLUME ---
     SetSoundVolume(manager->sfxWeak, SFX_VOLUME);
     SetSoundVolume(manager->sfxMedium, SFX_VOLUME);
     SetSoundVolume(manager->sfxStrong, SFX_VOLUME);
     SetSoundVolume(manager->sfxCharge, CHARGE_VOLUME);
-    // Usando o novo EXPLOSION_VOLUME (0.6f)
-    SetSoundVolume(manager->sfxExplosionEnemy, EXPLOSION_VOLUME); // Volume da explosão
+    SetSoundVolume(manager->sfxExplosionEnemy, EXPLOSION_VOLUME);
 }
 
 void PlayMusicTrack(AudioManager *manager, MusicType type) {
-    // Adicionado um retorno de segurança caso o áudio não tenha sido carregado
+    // Adicionado um retorno de segurança
     if (type == MUSIC_CUTSCENE && manager->musicCutscene.frameCount == 0) return;
     if (type == MUSIC_SHOP && manager->musicShop.frameCount == 0) return;
     if (type == MUSIC_GAMEPLAY && manager->musicGameplay.frameCount == 0) return;
-
+    if (type == MUSIC_ENDING && manager->musicEnding.frameCount == 0) return; // <--- NOVO
 
     if (manager->currentMusic != NULL && IsMusicStreamPlaying(*manager->currentMusic)) {
         StopMusicStream(*manager->currentMusic);
@@ -69,9 +73,13 @@ void PlayMusicTrack(AudioManager *manager, MusicType type) {
             manager->currentMusic = &manager->musicGameplay;
             SetMusicVolume(*manager->currentMusic, BACKGROUND_VOLUME);
             break;
-        case MUSIC_CUTSCENE: // Música da Cutscene
+        case MUSIC_CUTSCENE:
             manager->currentMusic = &manager->musicCutscene;
             SetMusicVolume(*manager->currentMusic, CUTSCENE_VOLUME);
+            break;
+        case MUSIC_ENDING: // <--- NOVO: Música do Final
+            manager->currentMusic = &manager->musicEnding;
+            SetMusicVolume(*manager->currentMusic, ENDING_VOLUME);
             break;
         default: manager->currentMusic = NULL; return;
     }
@@ -97,20 +105,19 @@ void PlayAttackSfx(AudioManager *manager, int attackType) {
     }
 }
 
-// NOVO: Função para tocar o som de explosão
 void PlayEnemyExplosionSfx(AudioManager *manager) {
     if (!IsAudioDeviceReady()) return;
-    // O Raylib permite tocar o mesmo SoundObject várias vezes, criando o efeito de múltiplas explosões.
     PlaySound(manager->sfxExplosionEnemy);
 }
 
 void UnloadAudioManager(AudioManager *manager) {
     UnloadMusicStream(manager->musicShop);
     UnloadMusicStream(manager->musicGameplay);
-    UnloadMusicStream(manager->musicCutscene); // Descarrega Cutscene
+    UnloadMusicStream(manager->musicCutscene);
+    UnloadMusicStream(manager->musicEnding); // <--- NOVO: Descarrega música final
     UnloadSound(manager->sfxWeak);
     UnloadSound(manager->sfxMedium);
     UnloadSound(manager->sfxStrong);
     UnloadSound(manager->sfxCharge);
-    UnloadSound(manager->sfxExplosionEnemy); // NOVO: Descarrega Explosão
+    UnloadSound(manager->sfxExplosionEnemy);
 }

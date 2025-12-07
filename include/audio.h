@@ -1,3 +1,4 @@
+// audio.h
 #ifndef AUDIO_H
 #define AUDIO_H
 
@@ -10,27 +11,29 @@
 typedef enum {
     MUSIC_SHOP,
     MUSIC_GAMEPLAY,
-    MUSIC_CUTSCENE // Tipo de música para a Cutscene
+    MUSIC_CUTSCENE, // Música da Cutscene de Abertura
+    MUSIC_ENDING    // <--- NOVO: Música do Final (Comics)
 } MusicType;
 
 typedef struct AudioManager {
     Music musicShop;
     Music musicGameplay;
-    Music musicCutscene; // Áudio da cutscene
+    Music musicCutscene;
+    Music musicEnding;  // <--- NOVO: Música do Final
     Music* currentMusic;
 
     Sound sfxWeak;
     Sound sfxMedium;
     Sound sfxStrong;
     Sound sfxCharge;
-    Sound sfxExplosionEnemy; // NOVO: Som de explosão do inimigo
+    Sound sfxExplosionEnemy;
 } AudioManager;
 
 void InitAudioManager(AudioManager *manager);
 void UpdateAudioManager(AudioManager *manager);
 void PlayMusicTrack(AudioManager *manager, MusicType type);
 void PlayAttackSfx(AudioManager *manager, int attackType);
-void PlayEnemyExplosionSfx(AudioManager *manager); // NOVO: Função para tocar a explosão
+void PlayEnemyExplosionSfx(AudioManager *manager);
 void UnloadAudioManager(AudioManager *manager);
 
 #endif // AUDIO_H

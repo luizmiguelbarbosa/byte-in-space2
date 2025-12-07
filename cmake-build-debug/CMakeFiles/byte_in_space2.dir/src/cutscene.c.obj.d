@@ -17,6 +17,7 @@ CMakeFiles/byte_in_space2.dir/src/cutscene.c.obj: \
  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/crtdefs.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/corecrt.h \
  C:/Users/luiz1/byte/include/game_state.h \
+ C:/Users/luiz1/byte/include/audio.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/string.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/sec_api/string_s.h \
  C:/Program\ Files/JetBrains/CLion\ 2025.2.2/bin/mingw/x86_64-w64-mingw32/include/stdio.h \

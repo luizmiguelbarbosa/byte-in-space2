@@ -26,6 +26,10 @@ Shader crtShader;
 int locResolution;
 int locTime;
 
+// Declarando a audioManager como global (para que InitEnding possa acessá-la)
+AudioManager audioManager;
+
+
 // --- FUNÇÃO PARA DESENHAR A INTERFACE DE TRANSIÇÃO SHOP/WAVE ---
 void DrawShopTransitionUI(EnemyManager *manager) {
     if (!manager->triggerShopReturn) return;
@@ -163,7 +167,7 @@ int main(void) {
     EnemyManager enemyManager;
     InitEnemyManager(&enemyManager, GAME_WIDTH, GAME_HEIGHT);
 
-    AudioManager audioManager;
+    // Inicialização do Gerenciador de Áudio (Global)
     InitAudioManager(&audioManager);
 
     ShopScene shop;
@@ -216,19 +220,29 @@ int main(void) {
             case STATE_CUTSCENE:
                 UpdateCutscene(&cutscene, &currentState, dt);
 
+                // Se a janela fechou no UpdateCutscene (no caso do final, se for reutilizado), pare o loop.
+                if (WindowShouldClose()) break;
+
                 if (currentState == STATE_SHOP) {
                     StopMusicStream(audioManager.musicCutscene);
                     PlayMusicTrack(&audioManager, MUSIC_SHOP);
                 }
                 break;
 
+            // --- ESTADO FINAL (COMICS) ---
+            case STATE_ENDING:
+                UpdateCutscene(&cutscene, &currentState, dt);
+                // Se o jogo for fechado pela cutscene (após o último quadrinho), saia do loop principal
+                if (WindowShouldClose()) break;
+                break;
+
+
             case STATE_SHOP:
                 UpdateShop(&shop, &player, &starField, &currentState, dt);
                 UpdatePlayerBullets(&bulletManager, dt);
 
                 if (currentState == STATE_GAMEPLAY) {
-                    // Ao retornar da loja, não chamamos InitEnemyManager para manter o número da wave atual.
-                    // A wave será iniciada pelo loop de gameplay usando o estado já existente.
+                    // Ao retornar da loja, a wave será iniciada pelo loop de gameplay.
                     StopMusicStream(audioManager.musicShop);
                     PlayMusicTrack(&audioManager, MUSIC_GAMEPLAY);
                 }
@@ -238,8 +252,7 @@ int main(void) {
                 UpdateStarField(&starField, dt);
                 UpdateHud(&hud, dt);
 
-                // Variável de controle: Pausa de Ação (Bloqueia player, disparo, colisão)
-                // É TRUE se estiver na tela de transição ou no countdown de início de wave.
+                // Variável de controle: Pausa de Ação
                 bool isActionPaused = enemyManager.triggerShopReturn || enemyManager.waveStartTimer > 0 || enemyManager.gameOver;
 
                 // 1. Atualização e Movimento do Player (só se não estiver pausado)
@@ -247,35 +260,45 @@ int main(void) {
                     UpdatePlayer(&player, &bulletManager, &audioManager, &hud, dt, GAME_WIDTH, GAME_HEIGHT);
                 }
 
-                // 2. Movimento das Balas (Sempre move, mesmo pausado, para que as balas existentes saiam da tela)
+                // 2. Movimento das Balas
                 UpdatePlayerBullets(&bulletManager, dt);
 
-                // 3. Atualização de Inimigos e Timers (Sempre atualiza para gerenciar o spawn e o countdown)
-                // CHAMADA CORRIGIDA: Passa os ponteiros para hud.lives e enemyManager.gameOver
+                // 3. Atualização de Inimigos e Timers
                 UpdateEnemies(&enemyManager, dt, GAME_WIDTH, &player.currentLives, &enemyManager.gameOver);
 
-                // 4. Lógica de Colisão (só ocorre quando o jogo está ativo, para evitar tiros acidentais)
+                // 4. Lógica de Colisão
                 if (!isActionPaused) {
                     CheckBulletEnemyCollision(&bulletManager, &enemyManager, &player.gold, &audioManager);
                 }
 
 
-                // LÓGICA DE TRANSIÇÃO SHOP/WAVE (Teclas E e F)
+                // LÓGICA DE TRANSIÇÃO SHOP/WAVE/ENDING (Teclas E e F)
                 if (enemyManager.triggerShopReturn) {
-                    // [E] para ir para a loja
-                    if (IsKeyPressed(KEY_E)) {
-                        currentState = STATE_SHOP;
+
+                    // --- CONDIÇÃO DE VITÓRIA FINAL (WAVE 10) ---
+                    if (enemyManager.currentWave == 10) {
+                        InitEnding(&cutscene); // Inicializa a cutscene de final
+                        currentState = STATE_ENDING; // Muda para o estado de final
                         enemyManager.triggerShopReturn = false;
-                        StopMusicStream(audioManager.musicGameplay);
-                        PlayMusicTrack(&audioManager, MUSIC_SHOP);
+                        StopMusicStream(audioManager.musicGameplay); // Para a música de combate
                     }
-                    // [F] para continuar a próxima wave
-                    if (IsKeyPressed(KEY_F)) {
-                        enemyManager.triggerShopReturn = false;
-                        // UpdateEnemies no próximo frame irá iniciar a próxima wave (N+1)
+                    // --- FIM VERIFICAÇÃO DE FINAL DE JOGO ---
+
+                    else {
+                        // [E] para ir para a loja
+                        if (IsKeyPressed(KEY_E)) {
+                            currentState = STATE_SHOP;
+                            enemyManager.triggerShopReturn = false;
+                            StopMusicStream(audioManager.musicGameplay);
+                            PlayMusicTrack(&audioManager, MUSIC_SHOP);
+                        }
+                        // [F] para continuar a próxima wave
+                        if (IsKeyPressed(KEY_F)) {
+                            enemyManager.triggerShopReturn = false;
+                        }
                     }
                 }
-                // --- FIM LÓGICA DE TRANSIÇÃO SHOP/WAVE ---
+                // --- FIM LÓGICA DE TRANSIÇÃO SHOP/WAVE/ENDING ---
                 break;
         }
 
@@ -285,6 +308,7 @@ int main(void) {
 
             switch (currentState) {
                 case STATE_CUTSCENE:
+                case STATE_ENDING: // Desenha a mesma cutscene/ending
                     DrawCutscene(&cutscene, GAME_WIDTH, GAME_HEIGHT);
                     break;
 
@@ -296,27 +320,26 @@ int main(void) {
                 case STATE_GAMEPLAY:
                     DrawStarField(&starField);
 
-                    // NOVO: Desenha a linha verde neon (Limite de Game Over)
+                    // Desenha a linha verde neon (Limite de Game Over)
                     const Color NEON_GREEN_LINE = (Color){ 0, 255, 0, 255 };
                     DrawRectangle(0, (int)ENEMY_GAME_OVER_LINE_Y, GAME_WIDTH, 2, NEON_GREEN_LINE);
-                    // Efeito de Glow (semi-transparente acima e abaixo)
                     DrawRectangle(0, (int)ENEMY_GAME_OVER_LINE_Y - 2, GAME_WIDTH, 2, Fade(NEON_GREEN_LINE, 0.4f));
                     DrawRectangle(0, (int)ENEMY_GAME_OVER_LINE_Y + 2, GAME_WIDTH, 2, Fade(NEON_GREEN_LINE, 0.4f));
 
-
-                    // NOVO: Desenha os inimigos
+                    // Desenha os inimigos
                     DrawEnemies(&enemyManager);
                     DrawPlayer(&player);
-                    // IMPORTANTE: As balas devem ser desenhadas mesmo se o jogo estiver pausado
                     DrawPlayerBullets(&bulletManager);
 
-                    // Desenha a mensagem de início da wave (sobrepõe o jogo)
+                    // Desenha a mensagem de início da wave
                     DrawWaveStartUI(&enemyManager);
 
-                    // Desenha a interface de transição (sobrepõe o jogo e o wave start)
-                    DrawShopTransitionUI(&enemyManager);
+                    // Desenha a interface de transição (apenas se for antes da última wave)
+                    if (enemyManager.triggerShopReturn && enemyManager.currentWave < 10) {
+                        DrawShopTransitionUI(&enemyManager);
+                    }
 
-                    // NOVO: Tela de Game Over
+                    // Tela de Game Over
                     if (enemyManager.gameOver) {
                         DrawRectangle(0, 0, GAME_WIDTH, GAME_HEIGHT, Fade(BLACK, 0.8f));
                         DrawText("GAME OVER", GAME_WIDTH/2 - MeasureText("GAME OVER", 40)/2, GAME_HEIGHT/2 - 20, 40, RED);
@@ -348,30 +371,10 @@ int main(void) {
             EndShaderMode();
 
             if (currentState == STATE_GAMEPLAY && offsetX > 0) {
-                // --- CHAMADA LADO ESQUERDO (VIDA, ENERGIA, POWER-UPS) ---
-                DrawHudSide(&hud,
-                            true,
-                            offsetY,
-                            player.energyCharge,
-                            player.hasDoubleShot,
-                            player.hasShield,
-                            player.extraLives,
-                            player.currentLives,
-                            player.gold);
-
-                // --- CHAMADA LADO DIREITO (GOLD) ---
-                DrawHudSide(&hud,
-                            false,
-                            offsetY,
-                            0.0f, // Ignorado
-                            false, // Ignorado
-                            false, // Ignorado
-                            0, // Ignorado
-                            player.currentLives, // Necessário para a assinatura
-                            player.gold);
+                // Desenho do HUD Lateral
+                DrawHudSide(&hud, true, offsetY, player.energyCharge, player.hasDoubleShot, player.hasShield, player.extraLives, player.currentLives, player.gold);
+                DrawHudSide(&hud, false, offsetY, 0.0f, false, false, 0, player.currentLives, player.gold);
             }
-
-            // O DrawFPS(10, 50) foi removido.
 
         EndDrawing();
     }

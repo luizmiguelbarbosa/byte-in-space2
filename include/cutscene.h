@@ -5,33 +5,37 @@
 #include "game_state.h"
 #include <stdbool.h>
 
-// O array agora usa 34 páginas (de 0 a 33). Definido para 40 para ter margem de seguranca.
+// Definições antigas mantidas
 #define MAX_CUTSCENE_PAGES 40
-
-// Constante faltante: Velocidade da digitação: caracteres por segundo
 #define CHARS_PER_SECOND 30
 
 typedef struct {
     const char *text;
-    float duration; // Duração mínima em segundos da exibição
+    float duration;
 } CutscenePage;
 
 typedef struct {
+    // --- Variáveis da Intro (Existentes) ---
     CutscenePage pages[MAX_CUTSCENE_PAGES];
     int currentPage;
     float currentTimer;
-
-    // VARIÁVEIS ADICIONADAS PARA CORRIGIR OS ERROS:
-    float textTimer;    // Timer para controlar a digitação
-    int visibleChars;   // Quantidade de caracteres visíveis
-    bool isFadingOut;   // Controla o fade out entre as páginas
-
-    // Variáveis para o Fade-in/Out do Título final
+    float textTimer;
+    int visibleChars;
+    bool isFadingOut;
     float titleAlpha;
     bool showTitle;
+
+    // --- NOVAS VARIÁVEIS PARA O FINAL (COMICS) ---
+    bool isEnding;           // Se true, roda a lógica do final. Se false, roda a intro.
+    Texture2D endingImages[5]; // Array para as 5 imagens
+    int endingImageIndex;    // Qual imagem está mostrando (0 a 4)
+
 } CutsceneScene;
 
 void InitCutscene(CutsceneScene *cs);
+// Nova função para iniciar especificamente o final
+void InitEnding(CutsceneScene *cs);
+
 void UpdateCutscene(CutsceneScene *cs, GameState *state, float deltaTime);
 void DrawCutscene(CutsceneScene *cs, int screenWidth, int screenHeight);
 
