@@ -20,6 +20,9 @@
 #define ENEMY_INITIAL_HEALTH_T2 2
 #define ENEMY_INITIAL_HEALTH_T3 4
 
+// NOVA CONSTANTE PARA CONTROLE DA DESCIDA DO BOSS (SUGERIDO: Mova para enemy.h)
+#define BOSS_DROP_AMOUNT 30.0f
+
 // Array de caminhos para os frames do Boss (corrigido para caminhos relativos)
 static const char *bossFramePaths[BOSS_FRAME_COUNT] = {
     "assets/images/sprites/frame_04_delay-0.08s.gif",
@@ -200,7 +203,7 @@ void DrawExplosion(Enemy *enemy) {
     );
 }
 
-// --- Funções do Boss (Mantidas) ---
+// --- Funções do Boss (AJUSTADA A VELOCIDADE) ---
 
 void InitBoss(Boss *boss, int screenWidth, int screenHeight) {
     boss->active = true;
@@ -225,6 +228,7 @@ void InitBoss(Boss *boss, int screenWidth, int screenHeight) {
     // Movimento inicial (Ex: centro-direita)
     boss->movementTimer = 0.0f;
     boss->targetPosition.x = (float)screenWidth * 0.75f;
+    // targetPosition.y é o que controla a descida progressiva
     boss->targetPosition.y = 100.0f;
 }
 
@@ -243,19 +247,24 @@ void UpdateBoss(Boss *boss, float deltaTime, int screenWidth) {
         boss->hitTimer -= deltaTime;
     }
 
-    // 3. Lógica de Movimento (Movimento pendular simples)
-    float speed = 150.0f;
+    // 3. Lógica de Movimento (Movimento pendular simples com descida)
+    float speed = 100.0f; // 🎯 VELOCIDADE REDUZIDA (De 150.0f para 100.0f)
     Vector2 direction = Vector2Subtract(boss->targetPosition, boss->position);
     float distance = Vector2Length(direction);
 
     if (distance > 5.0f) {
+        // Movendo em direção ao alvo
         Vector2 normalizedDirection = Vector2Normalize(direction);
         boss->position.x += normalizedDirection.x * speed * deltaTime;
         boss->position.y += normalizedDirection.y * speed * deltaTime;
 
     } else {
-        // Chegou ao alvo, define um novo alvo
+        // Chegou ao alvo lateral, define um novo alvo
         float currentX = boss->position.x;
+
+        // Aumenta a posição Y do alvo para descer em direção ao jogador
+        boss->targetPosition.y += BOSS_DROP_AMOUNT;
+
         if (currentX < screenWidth / 2.0f) {
             // Mudar para o lado direito
             boss->targetPosition.x = (float)screenWidth * 0.75f;
@@ -318,7 +327,7 @@ void DrawBoss(Boss *boss, Texture2D frames[]) {
     );
 }
 
-// --- Lógica de Inicialização da Onda Corrigida ---
+// --- Lógica de Inicialização da Onda (Mantida) ---
 
 void InitEnemiesForWave(EnemyManager *manager, int screenWidth, int screenHeight, int waveNumber) {
 
@@ -455,6 +464,8 @@ void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeigh
     }
 }
 
+// --- Lógica de Atualização (AJUSTADA A CHECAGEM DO BOSS) ---
+
 void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int *playerLives, bool *gameOver) {
     int screenHeight = manager->gameHeight;
 
@@ -485,6 +496,22 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int 
     // --- Lógica de Atualização do Boss ---
     if (manager->bossActive) {
         UpdateBoss(&manager->boss, deltaTime, screenWidth);
+
+        // CHECAGEM: Boss atingiu a linha de Game Over (Hit Kill)
+        if (manager->boss.position.y >= ENEMY_GAME_OVER_LINE_Y && manager->boss.active) {
+
+            manager->boss.active = false; // Desativa o Boss
+            manager->bossActive = false;
+
+            // Perde todas as vidas
+            if (*playerLives > 0) {
+                *playerLives = 0;
+            }
+
+            manager->gameOver = true;
+            (*gameOver) = true;
+            return; // O jogo acabou.
+        }
     }
 
     // --- Lógica de Atualização dos Inimigos Normais ---
@@ -566,6 +593,8 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int 
         }
     }
 }
+
+// --- Funções de Desenho e Colisão (Mantidas) ---
 
 void DrawEnemies(EnemyManager *manager) {
     DrawParticles(&manager->particleManager);

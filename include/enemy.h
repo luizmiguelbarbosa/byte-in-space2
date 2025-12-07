@@ -25,7 +25,7 @@
 // --- Constantes do Boss ---
 #define BOSS_FRAME_COUNT 30
 #define BOSS_ANIMATION_SPEED 0.08f
-#define BOSS_INITIAL_HEALTH 10000 // 🎯 NOVO VALOR: 10000
+#define BOSS_INITIAL_HEALTH 5500
 #define BOSS_SIZE_WIDTH 128.0f
 #define BOSS_SIZE_HEIGHT 128.0f
 
