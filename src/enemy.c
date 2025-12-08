@@ -56,7 +56,7 @@ static const char *bossFramePaths[BOSS_FRAME_COUNT] = {
     "assets/images/sprites/frame_03_delay-0.08s.gif",
 };
 
-// --- Funções de Partículas (Mantidas) ---
+// --- Funções de Partículas  ---
 
 void InitParticleManager(ParticleManager *manager) {
     for (int i = 0; i < MAX_PARTICLES; i++) {
@@ -141,7 +141,7 @@ void DrawParticles(ParticleManager *manager) {
     }
 }
 
-// --- Funções de Inimigo Normal (Mantidas) ---
+// --- Funções de Inimigo Normal  ---
 
 void DrawEnemy(Enemy *enemy, Texture2D texture) {
     if (!enemy->active) return;
@@ -203,7 +203,7 @@ void DrawExplosion(Enemy *enemy) {
     );
 }
 
-// --- Funções do Boss (AJUSTADA A VELOCIDADE) ---
+// --- Funções do Boss  ---
 
 void InitBoss(Boss *boss, int screenWidth, int screenHeight) {
     boss->active = true;
@@ -248,7 +248,7 @@ void UpdateBoss(Boss *boss, float deltaTime, int screenWidth) {
     }
 
     // 3. Lógica de Movimento (Movimento pendular simples com descida)
-    float speed = 100.0f; // 🎯 VELOCIDADE REDUZIDA (De 150.0f para 100.0f)
+    float speed = 100.0f;
     Vector2 direction = Vector2Subtract(boss->targetPosition, boss->position);
     float distance = Vector2Length(direction);
 
@@ -464,7 +464,7 @@ void CheckWaveCompletion(EnemyManager *manager, int screenWidth, int screenHeigh
     }
 }
 
-// --- Lógica de Atualização (AJUSTADA A CHECAGEM DO BOSS) ---
+// --- Lógica de Atualização ---
 
 void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int *playerLives, bool *gameOver) {
     int screenHeight = manager->gameHeight;
@@ -594,7 +594,7 @@ void UpdateEnemies(EnemyManager *manager, float deltaTime, int screenWidth, int 
     }
 }
 
-// --- Funções de Desenho e Colisão (Mantidas) ---
+// --- Funções de Desenho e Colisão  ---
 
 void DrawEnemies(EnemyManager *manager) {
     DrawParticles(&manager->particleManager);
@@ -637,7 +637,7 @@ void UnloadEnemyManager(EnemyManager *manager) {
 
 void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemyManager, int *playerGold, AudioManager *audioManager) {
 
-    // --- Lógica de Colisão do Boss (VIDA E DANO AJUSTADOS) ---
+    // --- Lógica de Colisão do Boss  ---
     Boss *boss = &enemyManager->boss;
     if (enemyManager->bossActive && boss->active) {
         for (int i = 0; i < MAX_PLAYER_BULLETS; i++) {
@@ -658,7 +658,7 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
 
                 // Filtro: O Boss SÓ leva dano dos tiros de tipo 2 (Médio) e 3 (Forte).
                 if (bullet->type == 1 || bullet->type == 0 || bullet->type == 4) {
-                    // Bala destruída, mas Boss não leva dano nem pisca.
+                    // Bala destruída, mas Boss não leva dano
                     bullet->active = false;
                     PlaySound(audioManager->sfxWeak);
                     continue;
@@ -667,9 +667,9 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
                 // Aplica NOVO DANO
                 int damage = 0;
                 if (bullet->type == 2) {
-                    damage = 750; // 🎯 Dano Médio
+                    damage = 750; //  Dano Médio
                 } else if (bullet->type == 3) {
-                    damage = 1500; // 🎯 Dano Forte
+                    damage = 1500; //  Dano Forte
                 }
 
                 if (damage > 0) {
@@ -699,7 +699,7 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
         }
     }
 
-    // --- Lógica de Colisão de Inimigos Normais (Mantida) ---
+    // --- Lógica de Colisão de Inimigos Normais  ---
     for (int i = 0; i < MAX_PLAYER_BULLETS; i++) {
         Bullet *bullet = &bulletManager->bullets[i];
 
@@ -722,7 +722,7 @@ void CheckBulletEnemyCollision(BulletManager *bulletManager, EnemyManager *enemy
 
                 bullet->active = false;
 
-                // Dano para inimigos normais (Não alterado)
+                // Dano para inimigos normais
                 int damage = 1;
                 if (bullet->type == 2) damage = 2;
                 if (bullet->type == 3) damage = 4;

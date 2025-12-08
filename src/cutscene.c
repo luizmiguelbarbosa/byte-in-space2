@@ -7,30 +7,34 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+// --- CONSTANTES DE ESTILO E ANIMAÇÃO ---
 #define TITLE_FONT_SIZE 70
 #define INSTRUCTION_FONT_SIZE 30
-#define NEON_COLOR_BASE (Color){ 255, 0, 255, 255 }
-#define TITLE_GLOW_COLOR (Color){ 0, 150, 255, 255 }
+#define NEON_COLOR_BASE (Color){ 255, 0, 255, 255 }        // Cor principal do texto (Magenta)
+#define TITLE_GLOW_COLOR (Color){ 0, 150, 255, 255 }       // Cor do brilho do título (Ciano/Azul)
 
-#define PLANET_CYCLE_DURATION 15.0f
-#define EXPLOSION_START_TIME 10.0f
-#define EXPLOSION_END_TIME 12.0f
+#define PLANET_CYCLE_DURATION 15.0f // Duração do ciclo completo do planeta na intro (explosão e reforma)
+#define EXPLOSION_START_TIME 10.0f  // Tempo em segundos que a explosão do planeta começa
+#define EXPLOSION_END_TIME 12.0f    // Tempo em segundos que a explosão do planeta termina
 
 // Declarando a audioManager como externa para que esta função possa usá-la
 extern AudioManager audioManager;
 
 // --- DECLARAÇÕES DAS FUNÇÕES AUXILIARES ---
+// Desenha o fundo estrelado e o planeta com efeito de parallax
 static void DrawParallaxBackground(int screenWidth, int screenHeight, float time);
+// Desenha o texto com efeito de néon e pulsação
 static void DrawNeonText(const char *text, int posX, int posY, int fontSize, float pulseSpeed, Color glowAura);
 
-// --- INICIALIZAÇÃO DA INTRO (TELA DE TÍTULO) ---
+// --- FUNÇÃO DE INICIALIZAÇÃO DA INTRO (TELA DE TÍTULO) ---
 void InitCutscene(CutsceneScene *cs) {
-    cs->isEnding = false; // Modo Intro
+    cs->isEnding = false; // Define o modo como Intro
 
+    // Páginas/textos da Intro
     cs->pages[0]  = (CutscenePage){ "BYTE IN SPACE 2", 0.0f };
     cs->pages[1]  = (CutscenePage){ "Pressione ENTER para comecar", 0.0f };
 
-    cs->currentPage = 0;
+    cs->currentPage = 0; // Título
     cs->currentTimer = 0.0f;
     cs->textTimer = 0.0f;
     cs->visibleChars = 0;
@@ -39,29 +43,30 @@ void InitCutscene(CutsceneScene *cs) {
     cs->showTitle = false;
 }
 
-// --- INICIALIZAÇÃO DO FINAL (QUADRINHOS) ---
+// --- FUNÇÃO DE INICIALIZAÇÃO DO FINAL (QUADRINHOS) ---
 void InitEnding(CutsceneScene *cs) {
-    cs->isEnding = true; // Modo Final
+    cs->isEnding = true; // Define o modo como Final (Ending)
 
-    // Carrega as 5 imagens
+    // Carrega as 5 imagens (frames) do final do jogo, que agem como painéis de quadrinhos
     cs->endingImages[0] = LoadTexture("assets/images/sprites/1.png");
     cs->endingImages[1] = LoadTexture("assets/images/sprites/2.png");
     cs->endingImages[2] = LoadTexture("assets/images/sprites/3.png");
     cs->endingImages[3] = LoadTexture("assets/images/sprites/4.png");
     cs->endingImages[4] = LoadTexture("assets/images/sprites/5.png");
 
-    cs->endingImageIndex = 0;
+    cs->endingImageIndex = 0; // Começa no primeiro quadro
 
     // Toca a música final
+    // Certifique-se de que a música seja carregada e reproduzida corretamente
     PlayMusicTrack(&audioManager, MUSIC_ENDING);
 }
 
-// --- UPDATE ---
+// --- FUNÇÃO DE UPDATE ---
 void UpdateCutscene(CutsceneScene *cs, GameState *state, float deltaTime) {
 
     // >>> LÓGICA DO FINAL (QUADRINHOS) <<<
     if (cs->isEnding) {
-        // Pressionar Z para avançar
+        // Pressionar Z para avançar para o próximo quadro
         if (IsKeyPressed(KEY_Z)) {
             cs->endingImageIndex++;
 
@@ -76,29 +81,30 @@ void UpdateCutscene(CutsceneScene *cs, GameState *state, float deltaTime) {
         return;
     }
 
-    // >>> LÓGICA DA INTRO (TÍTULO) <<<
+    // >>> LÓGICA DA INTRO <<<
+    // Pular a intro
     if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)) {
-        *state = STATE_SHOP; // Vai para a loja/gameplay
+        *state = STATE_SHOP; // Vai para a loja/gameplay (Estado inicial do jogo)
         return;
     }
 
+    // Lógica do temporizador para a transição do Título para a Instrução
     if (cs->currentPage == 0) {
         cs->currentTimer += deltaTime;
         if (cs->currentTimer >= 3.0f) {
-            cs->currentPage = 1;
+            cs->currentPage = 1; // Avança para a página de instrução "Pressione ENTER"
         }
     }
 }
 
-// --- DRAW ---
+// --- FUNÇÃO DE DRAW ---
 void DrawCutscene(CutsceneScene *cs, int screenWidth, int screenHeight) {
 
-    // >>> DESENHO DO FINAL (QUADRINHOS) <<<
+    // --- DESENHO DO FINAL (QUADRINHOS) ---
     if (cs->isEnding) {
         ClearBackground(BLACK);
 
-        // --- CALCULA LAYOUT DE GRADE 2x3 (2 colunas, até 3 linhas) ---
-
+        // Define as dimensões da grade 2x3 (2 colunas, 3 linhas)
         const int COLUMNS = 2;
         const int ROWS = 3;
         const int MARGIN = 10;
@@ -122,7 +128,7 @@ void DrawCutscene(CutsceneScene *cs, int screenWidth, int screenHeight) {
             float drawWidth = panelWidth;
             float drawHeight = panelHeight;
 
-            // Lógica especial para o 5º quadro (index 4)
+            // Lógica especial para o 5º quadro (índice 4), que ocupa a largura total na última linha
             if (i == 4) {
                 // Quadro 5 é o grande final centralizado na 3ª linha
                 targetX = (float)MARGIN;
@@ -131,7 +137,7 @@ void DrawCutscene(CutsceneScene *cs, int screenWidth, int screenHeight) {
                 drawHeight = panelHeight;
 
             } else {
-                // Quadros 1-4 (Layout 2x2)
+                // Quadros 1-4 (Layout 2x2 nas duas primeiras linhas)
                 targetX = (float)MARGIN + (panelWidth + MARGIN) * col;
                 targetY = (float)MARGIN + (panelHeight + MARGIN) * row;
             }
@@ -142,11 +148,10 @@ void DrawCutscene(CutsceneScene *cs, int screenWidth, int screenHeight) {
                 4, RAYWHITE
             );
 
-            // Desenha a imagem dentro do painel
+            // Desenha a imagem dentro do painel (ligeiramente menor que o contorno)
             DrawTexturePro(
                 tex,
                 (Rectangle){ 0, 0, (float)tex.width, (float)tex.height },
-                // Encolhe levemente para caber no contorno
                 (Rectangle){ targetX + 2, targetY + 2, drawWidth - 4, drawHeight - 4 },
                 (Vector2){ 0, 0 },
                 0.0f,
@@ -154,43 +159,47 @@ void DrawCutscene(CutsceneScene *cs, int screenWidth, int screenHeight) {
             );
         }
 
-        // Instrução para pular
+        // Instrução para pular/avançar
         DrawText("Pressione [Z] para avancar...", screenWidth - 280, screenHeight - 20, 20, RAYWHITE);
 
         return;
     }
 
-    // >>> DESENHO DA INTRO (PARALLAX + NEON) <<<
+    // --- DESENHO DA INTRO (TELA DE TÍTULO) ---
+
+    // Fundo preto e animação de fundo (Parallax)
     DrawRectangle(0, 0, screenWidth, screenHeight, BLACK);
     DrawParallaxBackground(screenWidth, screenHeight, GetTime());
 
     const char *titleText = cs->pages[0].text;
     const char *instructionText = cs->pages[1].text;
 
-    // Título Principal
+    // Título Principal "BYTE IN SPACE 2"
     int titleWidth = MeasureText(titleText, TITLE_FONT_SIZE);
     int titlePosX = screenWidth / 2 - titleWidth / 2;
     int titlePosY = screenHeight / 2 - TITLE_FONT_SIZE / 2 - 50;
 
+    // Desenha o título com efeito de néon e pulsação
     DrawNeonText(titleText, titlePosX, titlePosY, TITLE_FONT_SIZE, 2.0f, TITLE_GLOW_COLOR);
 
-    // Instrução (Enter)
+    // Instrução "Pressione ENTER para comecar"
     if (cs->currentPage == 1) {
         int instructionWidth = MeasureText(instructionText, INSTRUCTION_FONT_SIZE);
         int instructionPosX = screenWidth / 2 - instructionWidth / 2;
         int instructionPosY = screenHeight / 2 + 50;
 
+        // Desenha a instrução com néon e pulsação mais rápida
         DrawNeonText(instructionText, instructionPosX, instructionPosY, INSTRUCTION_FONT_SIZE, 4.0f, NEON_COLOR_BASE);
     }
 }
 
-// ---------------------------------------------------------
-// FUNÇÕES AUXILIARES (mantidas)
-// ---------------------------------------------------------
-
+// --- FUNÇÃO AUXILIAR: DESENHO DO FUNDO PARALLAX ---
 static void DrawParallaxBackground(int screenWidth, int screenHeight, float time) {
-    float cycleTime = fmodf(time, PLANET_CYCLE_DURATION);
+    float cycleTime = fmodf(time, PLANET_CYCLE_DURATION); // Tempo dentro do ciclo de 15s
+
+    // 1. Estrelas de fundo (slowest layer)
     for (int i = 0; i < 200; i++) {
+        // ... (lógica de estrelas)
         int x = (i * 73) % screenWidth;
         int y = (i * 59) % screenHeight;
         float movementX = sin(time * 0.05f) * 10.0f;
@@ -201,7 +210,10 @@ static void DrawParallaxBackground(int screenWidth, int screenHeight, float time
         if (finalY < 0) finalY += screenHeight;
         DrawCircle(finalX, finalY, 1, (Color){ 150, 100, 100, 100 });
     }
+
+    // 2. Estrelas médias
     for (int i = 0; i < 100; i++) {
+        // ... (lógica de estrelas)
         int x = (i * 97) % screenWidth;
         int y = (i * 83) % screenHeight;
         float movementX = cos(time * 0.15f) * 20.0f;
@@ -212,7 +224,10 @@ static void DrawParallaxBackground(int screenWidth, int screenHeight, float time
         if (finalY < 0) finalY += screenHeight;
         DrawCircle(finalX, finalY, (i % 2) + 1, (Color){ 150, 150, 200, 150 });
     }
+
+    // 3. Estrelas rápidas
     for (int i = 0; i < 50; i++) {
+        // ... (lógica de estrelas)
         int x = (i * 121) % screenWidth;
         int y = (i * 107) % screenHeight;
         float movementX = sin(time * 0.25f) * 30.0f;
@@ -223,51 +238,77 @@ static void DrawParallaxBackground(int screenWidth, int screenHeight, float time
         if (finalY < 0) finalY += screenHeight;
         DrawCircle(finalX, finalY, 1, (Color){ 255, 255, 255, 200 });
     }
+
+    // 4. Planeta em Destruição/Reforma
     Vector2 planetPos = { screenWidth * 0.7f, screenHeight * 0.3f };
     float planetBaseSize = 80.0f;
-    Color planetBaseColor = { 50, 50, 100, 255 };
+    Color planetBaseColor = { 50, 50, 100, 255 }; // Azul escuro/cinza
     float currentPlanetSize = planetBaseSize;
     float atmosphereAlpha = 1.0f;
+
+    // Lógica da Explosão (entre 10s e 12s)
     if (cycleTime >= EXPLOSION_START_TIME && cycleTime < EXPLOSION_END_TIME) {
         float explosionPhase = (cycleTime - EXPLOSION_START_TIME) / (EXPLOSION_END_TIME - EXPLOSION_START_TIME);
         float blastRadius = planetBaseSize * (1.0f + explosionPhase * 2.0f);
+        // Desenha o flash de explosão vermelho
         DrawCircleV(planetPos, blastRadius, Fade(RED, 1.0f - explosionPhase));
-        currentPlanetSize = planetBaseSize * (1.0f - explosionPhase);
+        currentPlanetSize = planetBaseSize * (1.0f - explosionPhase); // O planeta encolhe/desaparece
         atmosphereAlpha = 1.0f - explosionPhase;
-    } else if (cycleTime >= EXPLOSION_END_TIME) {
+    }
+    // Lógica da Reforma (após 12s até 15s)
+    else if (cycleTime >= EXPLOSION_END_TIME) {
         float reformPhase = (cycleTime - EXPLOSION_END_TIME) / (PLANET_CYCLE_DURATION - EXPLOSION_END_TIME);
-        currentPlanetSize = planetBaseSize * reformPhase;
+        currentPlanetSize = planetBaseSize * reformPhase; // O planeta reaparece
         float pulse = (sin(time * 8.0f) + 1.0f) / 2.0f;
+        // Desenha um brilho para a reforma
         DrawCircleV(planetPos, planetBaseSize * 1.5f, Fade(TITLE_GLOW_COLOR, 0.4f * pulse * (1.0f - reformPhase)));
         atmosphereAlpha = reformPhase;
     }
+
+    // Desenha o corpo principal do planeta e sua atmosfera (se for visível)
     if (currentPlanetSize > 1.0f) {
         Color atmosphereColor = { 100, 100, 150, (unsigned char)(120 * atmosphereAlpha) };
         DrawCircleV(planetPos, currentPlanetSize * 1.3f, Fade(atmosphereColor, 0.5f));
         DrawCircleV(planetPos, currentPlanetSize * 1.1f, Fade(atmosphereColor, 0.8f * atmosphereAlpha));
         DrawCircleV(planetPos, currentPlanetSize, Fade(planetBaseColor, atmosphereAlpha));
     }
+
+    // 5. Linhas de Cometa/Rastro (Fastest layer, diagonal)
     Color colors[] = { RED, GREEN, YELLOW, TITLE_GLOW_COLOR, NEON_COLOR_BASE, ORANGE, LIME, VIOLET };
     for (int i = 0; i < 10; i++) {
         float speed = 250.0f + (i * 20.0f);
+        // Calcula o movimento diagonal
         float totalMovement = fmodf(time * speed, (float)screenWidth * 1.5f);
         float startOffset = (float)(i * 150);
         float xPos = (float)screenWidth + 100.0f - totalMovement + startOffset * 0.2f;
         float yPos = 0.0f - 50.0f + totalMovement * 0.7f + startOffset * 0.4f;
+
+        // Reinicia a posição se sair da tela
         if (xPos < -100.0f || yPos > (float)screenHeight + 100.0f) {
             xPos += (float)screenWidth * 2.0f + 200.0f;
             yPos -= (float)screenHeight * 1.5f;
         }
+
+        // Desenha a linha e o círculo (cabeça do cometa)
         DrawLineEx((Vector2){xPos, yPos}, (Vector2){ xPos + 20, yPos - 15 }, 3.0f, Fade(colors[i % 8], 0.7f));
         DrawCircleV((Vector2){xPos, yPos}, 3, Fade(colors[i % 8], 1.0f));
     }
 }
 
+// --- FUNÇÃO AUXILIAR: DESENHO DE TEXTO NEON ---
 static void DrawNeonText(const char *text, int posX, int posY, int fontSize, float pulseSpeed, Color glowAura) {
     float pulse = 1.0f;
+
+    // Calcula a pulsação se a velocidade for maior que zero
     if (pulseSpeed > 0) pulse = (sin(GetTime() * pulseSpeed) + 1.0f) / 2.0f;
+
+    // 1. Cor e transparência do brilho (aura)
     Color glowColor = glowAura;
+    // O alpha da aura pulsa
     glowColor.a = (unsigned char)(glowAura.a * (0.3f + pulse * 0.5f));
+
+    // 2. Desenha múltiplas sombras para criar o efeito de brilho (outline)
+    // O brilho é mais difuso
     DrawText(text, posX - 4, posY, fontSize, glowColor);
     DrawText(text, posX + 4, posY, fontSize, glowColor);
     DrawText(text, posX, posY - 4, fontSize, glowColor);
@@ -276,5 +317,7 @@ static void DrawNeonText(const char *text, int posX, int posY, int fontSize, flo
     DrawText(text, posX + 2, posY + 2, fontSize, glowColor);
     DrawText(text, posX - 2, posY + 2, fontSize, glowColor);
     DrawText(text, posX + 2, posY - 2, fontSize, glowColor);
+
+    // 3. Desenha o texto principal por cima, com a cor NEON_COLOR_BASE
     DrawText(text, posX, posY, fontSize, NEON_COLOR_BASE);
 }

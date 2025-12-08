@@ -29,7 +29,6 @@ include_directories(
 file(GLOB PROJECT_SOURCES "${CMAKE_SOURCE_DIR}/src/*.c")
 
 add_executable(byte_in_space2 ${PROJECT_SOURCES}
-        src/game_state.c
         include/game_state.h
         src/shop.c
         include/shop.h

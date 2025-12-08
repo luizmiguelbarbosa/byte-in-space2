@@ -224,30 +224,6 @@ src/enemy.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/enemy.c.s
 .PHONY : src/enemy.c.s
 
-src/game_state.obj: src/game_state.c.obj
-.PHONY : src/game_state.obj
-
-# target to build an object file
-src/game_state.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/game_state.c.obj
-.PHONY : src/game_state.c.obj
-
-src/game_state.i: src/game_state.c.i
-.PHONY : src/game_state.i
-
-# target to preprocess a source file
-src/game_state.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/game_state.c.i
-.PHONY : src/game_state.c.i
-
-src/game_state.s: src/game_state.c.s
-.PHONY : src/game_state.s
-
-# target to generate assembly for a file
-src/game_state.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/game_state.c.s
-.PHONY : src/game_state.c.s
-
 src/hud.obj: src/hud.c.obj
 .PHONY : src/hud.obj
 
@@ -295,54 +271,6 @@ src/main.s: src/main.c.s
 src/main.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/main.c.s
 .PHONY : src/main.c.s
-
-src/map.obj: src/map.c.obj
-.PHONY : src/map.obj
-
-# target to build an object file
-src/map.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/map.c.obj
-.PHONY : src/map.c.obj
-
-src/map.i: src/map.c.i
-.PHONY : src/map.i
-
-# target to preprocess a source file
-src/map.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/map.c.i
-.PHONY : src/map.c.i
-
-src/map.s: src/map.c.s
-.PHONY : src/map.s
-
-# target to generate assembly for a file
-src/map.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/map.c.s
-.PHONY : src/map.c.s
-
-src/physics.obj: src/physics.c.obj
-.PHONY : src/physics.obj
-
-# target to build an object file
-src/physics.c.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/physics.c.obj
-.PHONY : src/physics.c.obj
-
-src/physics.i: src/physics.c.i
-.PHONY : src/physics.i
-
-# target to preprocess a source file
-src/physics.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/physics.c.i
-.PHONY : src/physics.c.i
-
-src/physics.s: src/physics.c.s
-.PHONY : src/physics.s
-
-# target to generate assembly for a file
-src/physics.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\byte_in_space2.dir\build.make CMakeFiles/byte_in_space2.dir/src/physics.c.s
-.PHONY : src/physics.c.s
 
 src/player.obj: src/player.c.obj
 .PHONY : src/player.obj
@@ -437,21 +365,12 @@ help:
 	@echo ... src/enemy.obj
 	@echo ... src/enemy.i
 	@echo ... src/enemy.s
-	@echo ... src/game_state.obj
-	@echo ... src/game_state.i
-	@echo ... src/game_state.s
 	@echo ... src/hud.obj
 	@echo ... src/hud.i
 	@echo ... src/hud.s
 	@echo ... src/main.obj
 	@echo ... src/main.i
 	@echo ... src/main.s
-	@echo ... src/map.obj
-	@echo ... src/map.i
-	@echo ... src/map.s
-	@echo ... src/physics.obj
-	@echo ... src/physics.i
-	@echo ... src/physics.s
 	@echo ... src/player.obj
 	@echo ... src/player.i
 	@echo ... src/player.s
