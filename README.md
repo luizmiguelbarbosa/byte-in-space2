@@ -49,10 +49,10 @@ The project follows a modular C structure to keep source code, headers, and asse
 ```
 ## Libraries Used 📚
 ```bash
-C Language (C11/C17)
+C Language 
 Raylib 5.0
 CMake
-GLSL (Shaders)
+GLSL 
 ```
 ## Project Task Distribution 🌌
 <p align="center">
