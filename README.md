@@ -68,3 +68,20 @@ GLSL
 </table>
 </p>
 
+## Concepts Used
+The transition from Python to C allowed the application of much more rigorous concepts. I moved from high-level abstractions to low-level control, utilizing **Manual Memory Management** and **Pointers** to optimize performance and resource handling.
+
+The use of **Structs** was essential for organizing game data, acting as the foundation for the game's architecture. Additionally, I implemented **Custom Shaders (GLSL)** to enhance visual fidelity, providing effects that go beyond the standard drawing functions.
+
+The project also applied **Linear Algebra** for movement and collision vectors, ensuring high precision in the game's physics loop, achieving a much more responsive feel compared to the first version.
+
+## Challenges and Issues
+The biggest challenge was the transition from the "managed" world of Python to the manual complexity of C. Managing memory without a garbage collector required a much more disciplined approach to avoid memory leaks and segmentation faults.
+
+Another significant issue was ensuring cross-platform compatibility. Managing different Raylib binaries for Linux, macOS, and Windows within the same repository required a solid understanding of how CMake links external dependencies. These technical hurdles provided a much steeper, yet more rewarding, learning curve than the first project, proving that good architecture is key to a stable game.
+
+<hr>
+
+<p align="center">
+  Developed by Luiz Miguel Barbosa
+</p>
