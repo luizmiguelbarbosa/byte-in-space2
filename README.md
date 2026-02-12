@@ -1,7 +1,19 @@
-# Byte in Space 2 🚀💥
+<h1 align="center">Byte in Space 2 🐶🚀💫</h1>
 
-## Team 🧑‍💻
-<table>
+<p align="center">
+  <img src="https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white" alt="C Language">
+  <img src="https://img.shields.io/badge/Raylib-white?style=for-the-badge&logo=raylib&logoColor=black" alt="Raylib">
+</p>
+
+<p align="center">
+  <b>The sequel to Byte in Space. A high-performance Space Invaders-inspired arcade game rewritten in C for ultimate speed and precision.</b>
+</p>
+
+<hr>
+
+## Developer 🧑‍💻
+
+<table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/luizmiguelbarbosa">
@@ -12,20 +24,30 @@
   </tr>
 </table>
 
-## About the Project 🎮
+<hr>
 
-**Byte in Space 2** is the sequel to *Byte in Space*, originally developed in Python using PyGame.
+## Description 🌌
 
-This version was completely rewritten in **C**, using the **Raylib** library, focusing on performance, modular architecture, and low-level system control.
+**Byte in Space 2** is the evolution of the original Python-based project. Moving from Pygame to **C** and **Raylib**, this sequel offers a much more robust architecture, smoother performance, and advanced features like custom shaders and cross-platform compatibility. It stays true to the classic "Space Invaders" essence while pushing the technical limits of a second-period project.
 
-Inspired by classic arcade games such as *Space Invaders*, the project represents a significant technical evolution, emphasizing structured code organization, memory management, and deeper understanding of game engine fundamentals.
+## Folder Structure 📂
 
-## Build & Run ⚙️🛠️
+The project follows a modular C structure to keep source code, headers, and assets organized:
 
-This project uses **CMake** for cross-platform building.
-
-Clone the repository:
 ```bash
-git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
-```
-
+├── assets             
+│   ├── fonts          
+│   ├── images         
+│   │   └── sprites     
+│   ├── ost             
+│   └── shaders         
+│
+├── external            
+│   ├── raylib_linux
+│   ├── raylib_macos
+│   └── raylib_windows
+│
+├── include             
+├── src                 
+├── CMakeLists.txt     
+└── .idea               
