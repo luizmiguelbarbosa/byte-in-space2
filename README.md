@@ -47,3 +47,24 @@ The project follows a modular C structure to keep source code, headers, and asse
 ├── CMakeLists.txt      # Build configuration script
 └── .idea               # IDE settings
 ```
+## Libraries Used 📚
+```bash
+C Language (C11/C17)
+Raylib 5.0
+CMake
+GLSL (Shaders)
+```
+## Project Task Distribution 🌌
+<p align="center">
+<table align="center">
+<tr>
+<th>Developer</th>
+<th>Tasks</th>
+</tr>
+<tr>
+<td><a href="https://github.com/luizmiguelbarbosa">Luiz Miguel Barbosa</a></td>
+<td>Developed the entire game engine in C, including memory management, entity systems, custom shaders, and cross-platform build automation.</td>
+</tr>
+</table>
+</p>
+
