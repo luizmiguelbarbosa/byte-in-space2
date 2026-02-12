@@ -74,11 +74,16 @@ The project is already pre-compiled for quick access. To play the game, follow t
 
 1. **Clone the repository:**
 ```bash
-git clone [https://github.com/luizmiguelbarbosa/byte_in_space_2.git](https://github.com/luizmiguelbarbosa/byte_in_space_2.git)
+git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
 ```
 2. **Navigate to the executable folder:**
+   ```bash
+   Open the cmake-build-debug directory.
+   ```
 3. **Run the game:**
-
+   ```bash
+   Execute the byte_in_space_2.exe file.
+   ```
 ## Concepts Used
 The transition from Python to C allowed the application of much more rigorous concepts. I moved from high-level abstractions to low-level control, utilizing **Manual Memory Management** and **Pointers** to optimize performance and resource handling.
 
