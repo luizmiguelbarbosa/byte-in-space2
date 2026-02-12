@@ -73,9 +73,9 @@ GLSL
 The project is already pre-compiled for quick access. To play the game, follow these steps:
 
 1. **Clone the repository:**
-```bash
+    ```bash
     git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
-```
+    ```
 2. **Navigate to the executable folder:**
    ```bash
    Open the cmake-build-debug directory.
