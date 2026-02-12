@@ -28,5 +28,4 @@ Clone the repository:
 ```bash
 git clone https://github.com/your-username/byte_in_space_2.git
 ```
-```bash
-git clone https://github.com/your-username/byte_in_space_2.git
+
