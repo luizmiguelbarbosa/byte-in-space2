@@ -74,7 +74,7 @@ The project is already pre-compiled for quick access. To play the game, follow t
 
 1. **Clone the repository:**
 ```bash
-git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
+    git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
 ```
 2. **Navigate to the executable folder:**
    ```bash
