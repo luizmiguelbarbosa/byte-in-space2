@@ -1,7 +1,14 @@
-# Byte in Space 2 🐶🚀💫
+<h1 align="center">Byte in Space 2 🐶🚀💫</h1>
+
+<p align="center">
+  <b>The sequel to Byte in Space. A high-performance Space Invaders-inspired arcade game rewritten in C for ultimate speed and precision.</b>
+</p>
+
+<hr>
 
 ## Developer 🧑‍💻
-<table>
+
+<table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/luizmiguelbarbosa">
@@ -12,18 +19,31 @@
   </tr>
 </table>
 
-## Installing the Game ⚙️🛠️
+<hr>
 
-Clone the repository:
+## Description 🌌
+
+**Byte in Space 2** is the evolution of the original Python-based project. Moving from Pygame to **C** and **Raylib**, this sequel offers a much more robust architecture, smoother performance, and advanced features like custom shaders and cross-platform compatibility. It stays true to the classic "Space Invaders" essence while pushing the technical limits of a second-period project.
+
+## Folder Structure 📂
+
+The project follows a modular C structure to keep source code, headers, and assets organized:
+
 ```bash
-git clone [https://github.com/luizmiguelbarbosa/byte_in_space_2.git](https://github.com/luizmiguelbarbosa/byte_in_space_2.git)
+├── assets              # Game resources
+│   ├── fonts           # Custom typography
+│   ├── images          # UI elements and textures
+│   │   └── sprites     # Game entities (Player, Enemies, VFX)
+│   ├── ost             # Original Soundtrack and SFX
+│   └── shaders         # GLSL Shaders for visual effects
+│
+├── external            # Platform-specific Raylib binaries
+│   ├── raylib_linux
+│   ├── raylib_macos
+│   └── raylib_windows
+│
+├── include             # .h Header files
+├── src                 # .c Source files
+├── CMakeLists.txt      # Build configuration script
+└── .idea               # IDE settings
 ```
-Build with CMake:
-
-cd byte_in_space_2
-mkdir build && cd build
-cmake ..
-make
-
-Run the game:
-./byte_in_space_2
