@@ -26,6 +26,6 @@ This project uses **CMake** for cross-platform building.
 
 Clone the repository:
 ```bash
-git clone https://github.com/your-username/byte_in_space_2.git
+git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
 ```
 
