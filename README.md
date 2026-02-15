@@ -30,22 +30,22 @@
 The project follows a modular C structure to keep source code, headers, and assets organized:
 
 ```bash
-├── assets              # Game resources
-│   ├── fonts           # Custom typography
-│   ├── images          # UI elements and textures
-│   │   └── sprites     # Game entities (Player, Enemies, VFX)
-│   ├── ost             # Original Soundtrack and SFX
-│   └── shaders         # GLSL Shaders for visual effects
+├── assets              
+│   ├── fonts           
+│   ├── images          
+│   │   └── sprites     
+│   ├── ost             
+│   └── shaders         
 │
-├── external            # Platform-specific Raylib binaries
+├── external            
 │   ├── raylib_linux
 │   ├── raylib_macos
 │   └── raylib_windows
 │
-├── include             # .h Header files
-├── src                 # .c Source files
-├── CMakeLists.txt      # Build configuration script
-└── .idea               # IDE settings
+├── include             
+├── src                 
+├── CMakeLists.txt      
+└── .idea               
 ```
 ## Libraries Used 📚
 ```bash
