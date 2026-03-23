@@ -1,16 +1,3 @@
-melhore essa parte dos developers
-
-👨‍💻 Developers
-
-faça igual a esse aqui 
-
-melhore essa parte dos developers
-
-👨‍💻 Developers
-
-faça igual a esse aqui 
-
-
 <h1 align="center">Byte in Space 2 🐶🚀💫</h1>
 
 <p align="center">
