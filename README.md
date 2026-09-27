@@ -105,4 +105,3 @@ Esses desafios proporcionaram uma curva de aprendizado muito mais intensa, poré
 <p align="center">
   Desenvolvido por Luiz Miguel Barbosa
 </p>
-```
