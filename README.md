@@ -1,12 +1,12 @@
 <h1 align="center">Byte in Space 2 🐶🚀💫</h1>
 
 <p align="center">
-  <b>The sequel to Byte in Space. A high-performance Space Invaders-inspired arcade game rewritten in C for ultimate speed and precision.</b>
+  <b>A sequência de Byte in Space. Um jogo arcade de alta performance inspirado em Space Invaders, reescrito em C para maior velocidade e precisão.</b>
 </p>
 
 <hr>
 
-## Developer 🧑‍💻
+## Desenvolvedor 🧑‍💻
 
 <table align="center">
   <tr>
@@ -21,83 +21,88 @@
 
 <hr>
 
-## Description 🌌
+## Descrição 🌌
 
-**Byte in Space 2** is the evolution of the original Python-based project. Moving from Pygame to **C** and **Raylib**, this sequel offers a much more robust architecture, smoother performance, and advanced features like custom shaders and cross-platform compatibility. It stays true to the classic "Space Invaders" essence while pushing the technical limits of a second-period project.
+**Byte in Space 2** é a evolução do projeto original desenvolvido em Python. Migrando do Pygame para **C** e **Raylib**, esta sequência apresenta uma arquitetura mais robusta, melhor desempenho e recursos avançados, como shaders personalizados e compatibilidade multiplataforma. O projeto mantém a essência clássica de **Space Invaders**, enquanto explora conceitos técnicos mais avançados.
 
-## Folder Structure 📂
+## Estrutura de Pastas 📂
 
-The project follows a modular C structure to keep source code, headers, and assets organized:
+O projeto segue uma estrutura modular em C para manter o código-fonte, arquivos de cabeçalho e recursos organizados:
 
-```bash
-├── assets              
-│   ├── fonts           
-│   ├── images          
-│   │   └── sprites     
-│   ├── ost             
-│   └── shaders         
-│
-├── external            
-│   ├── raylib_linux
-│   ├── raylib_macos
-│   └── raylib_windows
-│
-├── include             
-├── src                 
-├── CMakeLists.txt      
-└── .idea               
-```
-## Libraries Used 📚
-```bash
-C Language 
-Raylib 5.0
-CMake
-GLSL 
-```
-## Project Task Distribution 🌌
+    ├── assets
+    │   ├── fonts
+    │   ├── images
+    │   │   └── sprites
+    │   ├── ost
+    │   └── shaders
+    │
+    ├── external
+    │   ├── raylib_linux
+    │   ├── raylib_macos
+    │   └── raylib_windows
+    │
+    ├── include
+    ├── src
+    ├── CMakeLists.txt
+    └── .idea
+
+## Bibliotecas Utilizadas 📚
+
+    Linguagem C
+    Raylib 5.0
+    CMake
+    GLSL
+
+## Distribuição das Tarefas do Projeto 🌌
+
 <p align="center">
 <table align="center">
 <tr>
-<th>Developer</th>
-<th>Tasks</th>
+<th>Desenvolvedor</th>
+<th>Tarefas</th>
 </tr>
 <tr>
 <td><a href="https://github.com/luizmiguelbarbosa">Luiz Miguel Barbosa</a></td>
-<td>Developed the entire game engine in C, including memory management, entity systems, custom shaders, and cross-platform build automation.</td>
+<td>Desenvolvimento de toda a engine do jogo em C, incluindo gerenciamento de memória, sistemas de entidades, shaders personalizados e automação da compilação multiplataforma.</td>
 </tr>
 </table>
 </p>
 
-## How to Run 🚀
+## Como Executar 🚀
 
-The project is already pre-compiled for quick access. To play the game, follow these steps:
+O projeto já possui uma versão pré-compilada para facilitar o acesso. Para executar o jogo, siga os passos abaixo:
 
-1. **Clone the repository:**
-    ```bash
-    git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
-    ```
-2. **Navigate to the executable folder:**
-   ```bash
-   Open the cmake-build-debug directory.
-   ```
-3. **Run the game:**
-   ```bash
-   Execute the byte_in_space_2.exe file.
-   ```
-## Concepts Used
-The transition from Python to C allowed the application of much more rigorous concepts. I moved from high-level abstractions to low-level control, utilizing **Manual Memory Management** and **Pointers** to optimize performance and resource handling.
+1. **Clone o repositório:**
 
-The use of **Structs** was essential for organizing game data, acting as the foundation for the game's architecture. Additionally, I implemented **Custom Shaders (GLSL)** to enhance visual fidelity, providing effects that go beyond the standard drawing functions.
+       git clone https://github.com/luizmiguelbarbosa/byte_in_space_2.git
 
-The project also applied **Linear Algebra** for movement and collision vectors, ensuring high precision in the game's physics loop, achieving a much more responsive feel compared to the first version.
+2. **Acesse a pasta do executável:**
 
-## Challenges and Issues
-The biggest challenge was the transition from the "managed" world of Python to the manual complexity of C. Managing memory without a garbage collector required a much more disciplined approach to avoid memory leaks and segmentation faults.
+       Abra o diretório cmake-build-debug.
 
-Another significant issue was ensuring cross-platform compatibility. Managing different Raylib binaries for Linux, macOS, and Windows within the same repository required a solid understanding of how CMake links external dependencies. These technical hurdles provided a much steeper, yet more rewarding, learning curve than the first project, proving that good architecture is key to a stable game.
+3. **Execute o jogo:**
+
+       Execute o arquivo byte_in_space_2.exe.
+
+## Conceitos Utilizados
+
+A transição do Python para C permitiu a aplicação de conceitos mais rigorosos. O projeto passou de abstrações de alto nível para um maior controle sobre os recursos do sistema, utilizando **gerenciamento manual de memória** e **ponteiros** para otimizar o desempenho e o gerenciamento de recursos.
+
+O uso de **structs** foi essencial para organizar os dados do jogo, servindo como base para sua arquitetura. Além disso, foram implementados **shaders personalizados (GLSL)** para aprimorar a qualidade visual, proporcionando efeitos que vão além das funções padrão de desenho.
+
+O projeto também aplicou conceitos de **Álgebra Linear** para trabalhar com vetores de movimento e colisão, garantindo maior precisão na física do jogo e proporcionando uma experiência de controle mais responsiva em comparação à primeira versão.
+
+## Desafios e Problemas
+
+O maior desafio foi a transição do ambiente "gerenciado" do Python para a complexidade do gerenciamento manual de memória em C. Trabalhar sem um coletor de lixo exigiu uma abordagem muito mais disciplinada para evitar vazamentos de memória e falhas de segmentação.
+
+Outro desafio significativo foi garantir a **compatibilidade multiplataforma**. Gerenciar diferentes binários da Raylib para Linux, macOS e Windows dentro do mesmo repositório exigiu uma compreensão mais sólida de como o CMake realiza a configuração e o vínculo de dependências externas.
+
+Esses desafios proporcionaram uma curva de aprendizado muito mais intensa, porém também mais gratificante do que a primeira versão do projeto, demonstrando a importância de uma boa arquitetura para a construção de um software estável.
 
 <hr>
 
 <p align="center">
-  Developed by Luiz Miguel Barbosa
+  Desenvolvido por Luiz Miguel Barbosa
 </p>
+```
